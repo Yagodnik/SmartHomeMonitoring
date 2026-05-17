@@ -1,3 +1,5 @@
+import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgType
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -12,7 +14,22 @@ private val PrettyPrintJson = Json {
     prettyPrint = true
 }
 
-fun main() {
+fun main(args: Array<String>) {
+    val parser = ArgParser("Smart Home Monitoring")
+
+    val name by parser.option(
+        ArgType.String,
+        shortName = "n",
+        description = "User name"
+    )
+
+    parser.parse(args)
+
+    println("Hello, $name!")
+
+    val a = MyTestClass(1, 2)
+    println(a.sum(InputData(1, 2)))
+
     val message = Message(
         topic = "Kotlin/Native",
         content = "Hello!"

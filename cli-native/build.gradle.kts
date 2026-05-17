@@ -8,13 +8,12 @@ plugins {
 group = "ru.yagodnik"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
+dependencies {
+    commonMainImplementation(project(":yandex"))
+    commonMainImplementation(libs.kotlinxCli)
 }
 
 kotlin {
-    jvmToolchain(21)
-
     macosArm64()
     macosX64()
     linuxX64()
@@ -25,13 +24,6 @@ kotlin {
             executable {
                 entryPoint = "main"
             }
-        }
-    }
-
-    sourceSets {
-        nativeMain.dependencies {
-            implementation(libs.kotlinxSerializationJson)
-            implementation(libs.kotlinxCli)
         }
     }
 }
