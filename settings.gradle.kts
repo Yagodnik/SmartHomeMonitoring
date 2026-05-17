@@ -13,5 +13,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "SmartHomeMonitoring"
 
-include(":yandex")
+include(":scrapers")
 include(":cli-native")

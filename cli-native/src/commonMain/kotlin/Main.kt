@@ -27,9 +27,6 @@ fun main(args: Array<String>) {
 
     println("Hello, $name!")
 
-    val a = MyTestClass(1, 2)
-    println(a.sum(InputData(1, 2)))
-
     val message = Message(
         topic = "Kotlin/Native",
         content = "Hello!"

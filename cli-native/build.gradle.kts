@@ -9,7 +9,7 @@ group = "ru.yagodnik"
 version = "1.0-SNAPSHOT"
 
 dependencies {
-    commonMainImplementation(project(":yandex"))
+    "commonMainImplementation"(project(":scrapers"))
     commonMainImplementation(libs.kotlinxCli)
 }
 
