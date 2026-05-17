@@ -17,5 +17,9 @@ fun main() {
         topic = "Kotlin/Native",
         content = "Hello!"
     )
-    println(PrettyPrintJson.encodeToString(message))
+
+    val red = "\u001b[31m"
+    val reset = "\u001b[0m"
+
+    println(red + PrettyPrintJson.encodeToString(message) + reset)
 }
