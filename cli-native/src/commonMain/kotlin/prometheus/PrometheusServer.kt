@@ -28,7 +28,7 @@ class PrometheusServer(
                                 append("# TYPE $name gauge\n")
                                 append("# HELP $name Auto-collected metric\n")
 
-                                append("$name $value\n\n")
+                                append("$name{device_id=\"${metric.deviceId}\"} $value\n\n")
                             } catch (e: NumberFormatException) {}
                         }
                     }
