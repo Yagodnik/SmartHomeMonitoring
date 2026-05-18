@@ -23,7 +23,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(libs.ktorClientCore)
-            implementation(libs.ktorClientCio)
+            implementation(libs.ktorSerializationJson)
             implementation(libs.ktorClientContentNegotiation)
             api(libs.kotlinxSerializationJson)
         }
@@ -36,6 +36,11 @@ kotlin {
         jvmTest.dependencies {
             runtimeOnly("org.junit.platform:junit-platform-launcher")
         }
+
+        jvmMain.dependencies    { implementation(libs.ktorClientCio) }
+        linuxMain.dependencies  { implementation(libs.ktorClientCurl) }
+        mingwMain.dependencies  { implementation(libs.ktorClientWinhttp) }
+        macosMain.dependencies  { implementation(libs.ktorClientDarwin) }
     }
 }
 

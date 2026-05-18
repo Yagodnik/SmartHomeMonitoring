@@ -8,7 +8,10 @@ import jobs.ScraperService
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.supervisorScope
+import platform.posix.getenv
 import printer.Color
+import yandex.api.KtorYandexApi
+import yandex.scraper.YandexScraper
 import kotlin.time.Duration.Companion.seconds
 
 fun main(args: Array<String>) {
@@ -30,8 +33,11 @@ fun main(args: Array<String>) {
 
     val bus = MetricBus<Long>()
 
+    val api = KtorYandexApi("")
+    val scraper = YandexScraper(api)
+
     val services = listOf(
-        ScraperService(bus, 1.seconds),
+        ScraperService(bus, 10.seconds, scraper),
         CsvExporterService(bus),
         PrometheusExporterService(bus),
     )

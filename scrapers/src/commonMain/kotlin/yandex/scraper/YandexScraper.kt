@@ -35,6 +35,10 @@ class YandexScraper(
     override suspend fun scrape(): List<Metric> {
         val result = api.queryUserInfo()
 
+        if (result.isFailure) {
+            println(result.exceptionOrNull()?.message)
+        }
+
         return result.fold(
             onSuccess = { scrapeFromUserInfo(it) },
             onFailure = { emptyList() }

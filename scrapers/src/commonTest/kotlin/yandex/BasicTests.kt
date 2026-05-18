@@ -1,5 +1,6 @@
 package yandex
 
+import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockEngineConfig
 import yandex.api.KtorYandexApi
@@ -8,8 +9,10 @@ import kotlin.test.Test
 
 class BasicTests {
     private val config = MockEngineConfig()
-    private val mockEngine = MockEngine(config)
-    private val api = KtorYandexApi("", mockEngine)
+
+    private val client = HttpClient(MockEngine) {}
+
+    private val api = KtorYandexApi("", client)
 
     private val scraper = YandexScraper(api)
 
