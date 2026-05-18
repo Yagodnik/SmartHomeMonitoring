@@ -10,9 +10,14 @@ version = "1.0-SNAPSHOT"
 
 dependencies {
     commonMainImplementation(project(":scrapers"))
+
     commonMainImplementation(libs.kotlinxCli)
     commonMainImplementation(libs.yamlkt)
     commonMainImplementation(libs.kotlinxIoCore)
+    commonMainImplementation(libs.kotlinEnvVar)
+    commonMainImplementation(libs.kotlinxDatetime)
+    commonMainImplementation(libs.ktorServerCore)
+    commonMainImplementation(libs.ktorServerCio)
 }
 
 kotlin {

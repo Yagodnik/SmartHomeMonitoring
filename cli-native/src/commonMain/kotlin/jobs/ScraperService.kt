@@ -1,15 +1,18 @@
 package jobs
 
 import Scraper
-import bus.MetricBus
+import metrics.MetricsBus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import metrics.MetricsSnapshot
 import kotlin.random.Random
 import kotlin.time.Duration
+import kotlin.time.TimeSource
 
 class ScraperService(
-    private val bus: MetricBus<Long>,
+    private val bus: MetricsBus,
     private val interval: Duration,
     private val scraper: Scraper
 ) : AppService {
@@ -17,13 +20,9 @@ class ScraperService(
         scope.launch {
             while (true) {
                 val metrics = scraper.scrape()
+                val snapshot = MetricsSnapshot(metrics)
+                bus.publish(snapshot)
 
-                println("${metrics.size} metrics received")
-                for (metric in metrics) {
-                    println("\t$metric")
-                }
-
-                bus.publish(Random.nextLong())
                 delay(interval)
             }
         }

@@ -5,11 +5,16 @@ kotlinxCli = "0.3.6"
 ktor = "3.0.0"
 yamlkt = "0.13.0"
 kotlinxIoCore = "0.5.4"
+kotlinEnvVar = "1.0.4"
+kotlinxDatetime = "0.6.1"
 
 [libraries]
 kotlinxSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 kotlinxCli = { module = "org.jetbrains.kotlinx:kotlinx-cli", version.ref = "kotlinxCli" }
-kotlinTest = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlinxIoCore = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinxIoCore" }
+kotlinEnvVar = { module = "dev.scottpierce:kotlin-env-var", version.ref = "kotlinEnvVar" }
+kotlinxDatetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+
 ktorClientCore = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktorClientCio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktorClientCurl = { module = "io.ktor:ktor-client-curl", version.ref = "ktor" }
@@ -18,8 +23,12 @@ ktorClientDarwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor"
 ktorClientContentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktorClientMock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 ktorSerializationJson = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktorServerCore = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
+ktorServerCio  = { module = "io.ktor:ktor-server-cio", version.ref = "ktor" }
+
 yamlkt = { module = "net.mamoe.yamlkt:yamlkt", version.ref = "yamlkt" }
-kotlinxIoCore = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version = "kotlinxIoCore" }
+
+kotlinTest = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 
 [plugins]
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
