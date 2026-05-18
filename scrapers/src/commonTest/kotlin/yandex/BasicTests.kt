@@ -1,5 +1,6 @@
 package yandex
 
+import yandex.models.YandexUserInfo
 import yandex.scraper.YandexScraper
 import kotlin.test.Test
 

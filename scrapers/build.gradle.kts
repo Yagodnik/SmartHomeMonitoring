@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -23,11 +22,15 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(libs.ktorClientCore)
+            implementation(libs.ktorClientCio)
+            implementation(libs.ktorClientContentNegotiation)
             api(libs.kotlinxSerializationJson)
         }
 
         commonTest.dependencies {
-            implementation(kotlin("test"))
+            implementation(libs.kotlinTest)
+            implementation(libs.ktorClientMock)
         }
 
         jvmTest.dependencies {
