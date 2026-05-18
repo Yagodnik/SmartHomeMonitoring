@@ -5,7 +5,7 @@ import kotlinx.serialization.json.put
 import yandex.parsers.impl.ColorSettingStateParser
 import kotlin.test.*
 
-class ColorSettingStateParserTest {
+class ColorSettingStateParserTests {
     private val parser = ColorSettingStateParser()
 
     @Test

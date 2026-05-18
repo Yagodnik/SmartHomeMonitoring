@@ -4,7 +4,7 @@ import kotlinx.serialization.json.*
 import yandex.parsers.impl.OnOffStateParser
 import kotlin.test.*
 
-class OnOffStateParserTest {
+class OnOffStateParserTests {
     private val parser = OnOffStateParser()
 
     @Test

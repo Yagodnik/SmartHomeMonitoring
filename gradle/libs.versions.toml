@@ -2,7 +2,7 @@
 kotlin = "2.0.0"
 kotlinxSerialization = "1.7.3"
 kotlinxCli = "0.3.6"
-ktor = "3.5.0"
+ktor = "3.0.0"
 
 [libraries]
 kotlinxSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }

@@ -1,11 +1,17 @@
 package yandex
 
-import yandex.models.YandexUserInfo
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.MockEngineConfig
+import yandex.api.KtorYandexApi
 import yandex.scraper.YandexScraper
 import kotlin.test.Test
 
 class BasicTests {
-    private val scraper = YandexScraper()
+    private val config = MockEngineConfig()
+    private val mockEngine = MockEngine(config)
+    private val api = KtorYandexApi(mockEngine)
+
+    private val scraper = YandexScraper(api)
 
     private val testSuccessfulRequest = """
         {

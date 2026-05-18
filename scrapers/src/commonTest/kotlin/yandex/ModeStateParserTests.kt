@@ -1,18 +1,18 @@
 package yandex
 
 import kotlinx.serialization.json.*
-import yandex.parsers.impl.RangeStateParser
+import yandex.parsers.impl.ModeStateParser
 import kotlin.test.*
 
-class RangeStateParserTest {
-    private val parser = RangeStateParser()
+class ModeStateParserTests {
+    private val parser = ModeStateParser()
 
     @Test
-    fun `parse returns MetricValue for valid brightness instance`() {
+    fun `parse returns MetricValue for valid cleanup_mode instance`() {
         // Arrange
         val state = buildJsonObject {
-            put("instance", "brightness")
-            put("value", "75")
+            put("instance", "cleanup_mode")
+            put("value", "quick")
         }
 
         // Act
@@ -20,76 +20,8 @@ class RangeStateParserTest {
 
         // Assert
         assertNotNull(result)
-        assertEquals("brightness", result.name)
-        assertEquals("75", result.value)
-    }
-
-    @Test
-    fun `parse returns MetricValue for valid volume instance`() {
-        // Arrange
-        val state = buildJsonObject {
-            put("instance", "volume")
-            put("value", "30")
-        }
-
-        // Act
-        val result = parser.parse(state)
-
-        // Assert
-        assertNotNull(result)
-        assertEquals("volume", result.name)
-        assertEquals("30", result.value)
-    }
-
-    @Test
-    fun `parse returns MetricValue for valid temperature instance`() {
-        // Arrange
-        val state = buildJsonObject {
-            put("instance", "temperature")
-            put("value", "22")
-        }
-
-        // Act
-        val result = parser.parse(state)
-
-        // Assert
-        assertNotNull(result)
-        assertEquals("temperature", result.name)
-        assertEquals("22", result.value)
-    }
-
-    @Test
-    fun `parse returns MetricValue for valid humidity instance`() {
-        // Arrange
-        val state = buildJsonObject {
-            put("instance", "humidity")
-            put("value", "60")
-        }
-
-        // Act
-        val result = parser.parse(state)
-
-        // Assert
-        assertNotNull(result)
-        assertEquals("humidity", result.name)
-        assertEquals("60", result.value)
-    }
-
-    @Test
-    fun `parse returns MetricValue for valid channel instance`() {
-        // Arrange
-        val state = buildJsonObject {
-            put("instance", "channel")
-            put("value", "5")
-        }
-
-        // Act
-        val result = parser.parse(state)
-
-        // Assert
-        assertNotNull(result)
-        assertEquals("channel", result.name)
-        assertEquals("5", result.value)
+        assertEquals("cleanup_mode", result.name)
+        assertEquals("quick", result.value)
     }
 
     @Test
@@ -97,7 +29,7 @@ class RangeStateParserTest {
         // Arrange
         val state = buildJsonObject {
             put("instance", "fan_speed")
-            put("value", "3")
+            put("value", "medium")
         }
 
         // Act
@@ -106,15 +38,15 @@ class RangeStateParserTest {
         // Assert
         assertNotNull(result)
         assertEquals("fan_speed", result.name)
-        assertEquals("3", result.value)
+        assertEquals("medium", result.value)
     }
 
     @Test
-    fun `parse returns MetricValue for valid brightness_k instance`() {
+    fun `parse returns MetricValue for valid thermostat instance`() {
         // Arrange
         val state = buildJsonObject {
-            put("instance", "brightness_k")
-            put("value", "4500")
+            put("instance", "thermostat")
+            put("value", "eco")
         }
 
         // Act
@@ -122,16 +54,16 @@ class RangeStateParserTest {
 
         // Assert
         assertNotNull(result)
-        assertEquals("brightness_k", result.name)
-        assertEquals("4500", result.value)
+        assertEquals("thermostat", result.name)
+        assertEquals("eco", result.value)
     }
 
     @Test
-    fun `parse returns MetricValue for zero value`() {
+    fun `parse returns MetricValue for valid program instance`() {
         // Arrange
         val state = buildJsonObject {
-            put("instance", "brightness")
-            put("value", "0")
+            put("instance", "program")
+            put("value", "cotton")
         }
 
         // Act
@@ -139,16 +71,16 @@ class RangeStateParserTest {
 
         // Assert
         assertNotNull(result)
-        assertEquals("brightness", result.name)
-        assertEquals("0", result.value)
+        assertEquals("program", result.name)
+        assertEquals("cotton", result.value)
     }
 
     @Test
-    fun `parse returns MetricValue for max value`() {
+    fun `parse returns MetricValue for valid dishwashing_program instance`() {
         // Arrange
         val state = buildJsonObject {
-            put("instance", "brightness")
-            put("value", "100")
+            put("instance", "dishwashing_program")
+            put("value", "auto")
         }
 
         // Act
@@ -156,16 +88,16 @@ class RangeStateParserTest {
 
         // Assert
         assertNotNull(result)
-        assertEquals("brightness", result.name)
-        assertEquals("100", result.value)
+        assertEquals("dishwashing_program", result.name)
+        assertEquals("auto", result.value)
     }
 
     @Test
-    fun `parse returns MetricValue for decimal value`() {
+    fun `parse returns MetricValue for valid coffee_mode instance`() {
         // Arrange
         val state = buildJsonObject {
-            put("instance", "temperature")
-            put("value", "21.5")
+            put("instance", "coffee_mode")
+            put("value", "espresso")
         }
 
         // Act
@@ -173,15 +105,49 @@ class RangeStateParserTest {
 
         // Assert
         assertNotNull(result)
-        assertEquals("temperature", result.name)
-        assertEquals("21.5", result.value)
+        assertEquals("coffee_mode", result.name)
+        assertEquals("espresso", result.value)
+    }
+
+    @Test
+    fun `parse returns MetricValue for valid tea_mode instance`() {
+        // Arrange
+        val state = buildJsonObject {
+            put("instance", "tea_mode")
+            put("value", "black")
+        }
+
+        // Act
+        val result = parser.parse(state)
+
+        // Assert
+        assertNotNull(result)
+        assertEquals("tea_mode", result.name)
+        assertEquals("black", result.value)
+    }
+
+    @Test
+    fun `parse returns MetricValue for valid heat_mode instance`() {
+        // Arrange
+        val state = buildJsonObject {
+            put("instance", "heat_mode")
+            put("value", "turbo")
+        }
+
+        // Act
+        val result = parser.parse(state)
+
+        // Assert
+        assertNotNull(result)
+        assertEquals("heat_mode", result.name)
+        assertEquals("turbo", result.value)
     }
 
     @Test
     fun `parse returns null when instance field is missing`() {
         // Arrange
         val state = buildJsonObject {
-            put("value", "50")
+            put("value", "quick")
         }
 
         // Act
@@ -195,7 +161,7 @@ class RangeStateParserTest {
     fun `parse returns null when value field is missing`() {
         // Arrange
         val state = buildJsonObject {
-            put("instance", "brightness")
+            put("instance", "cleanup_mode")
         }
 
         // Act
@@ -210,7 +176,7 @@ class RangeStateParserTest {
         // Arrange
         val state = buildJsonObject {
             put("instance", buildJsonObject { put("nested", "value") })
-            put("value", "50")
+            put("value", "quick")
         }
 
         // Act
@@ -224,8 +190,8 @@ class RangeStateParserTest {
     fun `parse returns null when value is not a primitive`() {
         // Arrange
         val state = buildJsonObject {
-            put("instance", "brightness")
-            put("value", buildJsonArray { add(50) })
+            put("instance", "cleanup_mode")
+            put("value", buildJsonArray { add("quick") })
         }
 
         // Act
@@ -240,7 +206,7 @@ class RangeStateParserTest {
         // Arrange
         val state = buildJsonObject {
             put("instance", JsonNull)
-            put("value", "50")
+            put("value", "quick")
         }
 
         // Act
@@ -254,7 +220,7 @@ class RangeStateParserTest {
     fun `parse returns null when value is JsonNull`() {
         // Arrange
         val state = buildJsonObject {
-            put("instance", "brightness")
+            put("instance", "cleanup_mode")
             put("value", JsonNull)
         }
 
@@ -293,11 +259,11 @@ class RangeStateParserTest {
     }
 
     @Test
-    fun `parse accepts negative temperature values`() {
+    fun `parse accepts numeric string values`() {
         // Arrange
         val state = buildJsonObject {
-            put("instance", "temperature")
-            put("value", "-5")
+            put("instance", "fan_speed")
+            put("value", "3")
         }
 
         // Act
@@ -305,16 +271,16 @@ class RangeStateParserTest {
 
         // Assert
         assertNotNull(result)
-        assertEquals("temperature", result.name)
-        assertEquals("-5", result.value)
+        assertEquals("fan_speed", result.name)
+        assertEquals("3", result.value)
     }
 
     @Test
-    fun `parse accepts custom range instance`() {
+    fun `parse accepts custom mode values`() {
         // Arrange
         val state = buildJsonObject {
-            put("instance", "custom_range")
-            put("value", "123")
+            put("instance", "custom_mode")
+            put("value", "my_custom_value")
         }
 
         // Act
@@ -322,7 +288,7 @@ class RangeStateParserTest {
 
         // Assert
         assertNotNull(result)
-        assertEquals("custom_range", result.name)
-        assertEquals("123", result.value)
+        assertEquals("custom_mode", result.name)
+        assertEquals("my_custom_value", result.value)
     }
 }
