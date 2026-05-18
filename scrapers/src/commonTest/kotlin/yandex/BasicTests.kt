@@ -9,7 +9,7 @@ import kotlin.test.Test
 class BasicTests {
     private val config = MockEngineConfig()
     private val mockEngine = MockEngine(config)
-    private val api = KtorYandexApi(mockEngine)
+    private val api = KtorYandexApi("", mockEngine)
 
     private val scraper = YandexScraper(api)
 

@@ -1,0 +1,5 @@
+exporters:
+  csv:
+    path: .
+  prometheus:
+    port: 9091

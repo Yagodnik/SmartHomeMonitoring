@@ -9,8 +9,10 @@ group = "ru.yagodnik"
 version = "1.0-SNAPSHOT"
 
 dependencies {
-    "commonMainImplementation"(project(":scrapers"))
+    commonMainImplementation(project(":scrapers"))
     commonMainImplementation(libs.kotlinxCli)
+    commonMainImplementation(libs.yamlkt)
+    commonMainImplementation(libs.kotlinxIoCore)
 }
 
 kotlin {

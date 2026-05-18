@@ -1,39 +1,50 @@
-import kotlinx.cli.ArgParser
-import kotlinx.cli.ArgType
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-
-@Serializable
-private data class Message(
-    val topic: String,
-    val content: String,
-)
-
-private val PrettyPrintJson = Json {
-    prettyPrint = true
-}
+import bus.MetricBus
+import cli.parseCliArgs
+import config.YamlConfigReader
+import jobs.AppService
+import jobs.CsvExporterService
+import jobs.PrometheusExporterService
+import jobs.ScraperService
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.supervisorScope
+import printer.Color
+import kotlin.time.Duration.Companion.seconds
 
 fun main(args: Array<String>) {
-    val parser = ArgParser("Smart Home Monitoring")
+    val cliConfig = try {
+        parseCliArgs(args)
+    } catch (e: Exception) {
+        println("CLI Error: ${e.message}")
+        return
+    }
 
-    val name by parser.option(
-        ArgType.String,
-        shortName = "n",
-        description = "User name"
+    val configReader = YamlConfigReader(cliConfig.configPath)
+
+    if (!configReader.isReady()) {
+        cliConfig.printer.println("Configuration not found at ${cliConfig.configPath}!", fg = Color.RED)
+//        return
+    }
+
+    cliConfig.printer.println("Exporter initialized successfully.", fg = Color.GREEN)
+
+    val bus = MetricBus<Long>()
+
+    val services = listOf(
+        ScraperService(bus, 1.seconds),
+        CsvExporterService(bus),
+        PrometheusExporterService(bus),
     )
 
-    parser.parse(args)
+    runBlocking {
+        services.forEach { it.launchIn(this) }
 
-    println("Hello, $name!")
-
-    val message = Message(
-        topic = "Kotlin/Native",
-        content = "Hello!"
-    )
-
-    val red = "\u001b[31m"
-    val reset = "\u001b[0m"
-
-    println(red + PrettyPrintJson.encodeToString(message) + reset)
+        try {
+            awaitCancellation()
+        } finally {
+            cliConfig.printer.println("Shutting down...", fg = Color.YELLOW)
+            services.reversed().forEach { it.stop() }
+            cliConfig.printer.println("All services stopped.", fg = Color.GREEN)
+        }
+    }
 }

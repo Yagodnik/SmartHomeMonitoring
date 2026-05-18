@@ -9,21 +9,20 @@ import io.ktor.http.*
 import yandex.models.YandexUserInfo
 
 class KtorYandexApi(
+    private val token: String,
     engine: HttpClientEngine = CIO.create(),
 ) : YandexApi {
     companion object {
-        private const val baseUrl = "https://api.iot.yandex.net/v1.0"
+        private const val BASE_URL = "https://api.iot.yandex.net/v1.0"
 
-        private const val userInfo = "/user/info"
+        private const val USER_INFO = "/user/info"
     }
 
     private val client = HttpClient(engine) {}
 
     override suspend fun queryUserInfo() : Result<YandexUserInfo> {
-        val token = ""
-
         return runCatching {
-            client.get("$baseUrl$userInfo") {
+            client.get("$BASE_URL$USER_INFO") {
                 header(HttpHeaders.Authorization, "Bearer $token")
             }.body<YandexUserInfo>()
         }
