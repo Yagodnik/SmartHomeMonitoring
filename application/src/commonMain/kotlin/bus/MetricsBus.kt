@@ -1,8 +1,9 @@
-package metrics
+package bus
 
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import models.MetricsSnapshot
 
 class MetricsBus(
     bufferSize: Int = 1000

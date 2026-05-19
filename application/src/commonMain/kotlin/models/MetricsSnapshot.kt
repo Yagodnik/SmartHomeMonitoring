@@ -1,8 +1,7 @@
-package metrics
+package models
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import models.Metric
 
 data class MetricsSnapshot(
     val metrics: List<Metric>,

@@ -15,3 +15,4 @@ rootProject.name = "SmartHomeMonitoring"
 
 include(":scrapers")
 include(":cli-native")
+include("application")

@@ -1,7 +1,11 @@
 package exporters
 
-import models.Metric
+import models.MetricsSnapshot
 
 interface Exporter {
-    fun export(metrics: List<Metric>)
+    fun start()
+
+    fun export(snapshot: MetricsSnapshot)
+
+    fun stop()
 }

@@ -2,7 +2,7 @@ package prometheus
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import metrics.MetricsSnapshot
+import models.MetricsSnapshot
 
 class PrometheusRegistry {
     private val _metrics = MutableStateFlow(MetricsSnapshot.empty())

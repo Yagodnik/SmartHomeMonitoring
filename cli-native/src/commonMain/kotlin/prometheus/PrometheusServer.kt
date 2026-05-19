@@ -5,38 +5,24 @@ import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import services.PrometheusService
 
 class PrometheusServer(
     private val port: Int,
-    private val registry: PrometheusRegistry
+    private val registry: PrometheusRegistry,
+    private val prometheusService: PrometheusService
 ) {
     private var engine: EmbeddedServer<CIOApplicationEngine, CIOApplicationEngine.Configuration>? = null
+    private val contentType = ContentType.parse("text/plain; version=0.0.4; charset=utf-8")
 
     fun start() {
         engine = embeddedServer(CIO, port = port) {
             routing {
                 get("/metrics") {
                     val snapshot = registry.get()
-                    val metrics = snapshot.metrics
+                    val metricsText = prometheusService.formatToPrometheus(snapshot)
 
-                    val metricsText = buildString {
-                        metrics.forEach { metric ->
-                            try {
-                                val name = metric.value.name
-                                val value = metric.value.value.toDouble()
-
-                                append("# TYPE $name gauge\n")
-                                append("# HELP $name Auto-collected metric\n")
-
-                                append("$name{device_id=\"${metric.deviceId}\"} $value\n\n")
-                            } catch (e: NumberFormatException) {}
-                        }
-                    }
-
-                    call.respondText(
-                        text = metricsText,
-                        contentType = ContentType.parse("text/plain; version=0.0.4; charset=utf-8")
-                    )
+                    call.respondText(metricsText, contentType)
                 }
             }
         }.start(wait = false)

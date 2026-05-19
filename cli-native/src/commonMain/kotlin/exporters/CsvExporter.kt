@@ -1,9 +1,22 @@
 package exporters
 
-import models.Metric
+import cli.CliConfig
+import models.MetricsSnapshot
+import printer.Color
 
-class CsvExporter : Exporter {
-    override fun export(metrics: List<Metric>) {
-        TODO("Not yet implemented")
+class CsvExporter(
+    private val cliConfig: CliConfig,
+) : Exporter {
+    override fun start() {
+        cliConfig.printer.println("Kinda creating a file...?", fg = Color.YELLOW)
     }
+
+    override fun export(snapshot: MetricsSnapshot) {
+        val timestamp = snapshot.timestamp
+        val metricsCount = snapshot.metrics.size
+
+        cliConfig.printer.println("[$timestamp] Received $metricsCount metrics")
+    }
+
+    override fun stop() = Unit
 }
