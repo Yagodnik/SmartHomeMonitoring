@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
@@ -22,10 +23,28 @@ dependencies {
 }
 
 kotlin {
+    jvm {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_21)
+        }
+    }
+
+    jvm()
     macosArm64()
     macosX64()
     linuxX64()
     mingwX64()
+
+    sourceSets {
+        commonTest.dependencies {
+            implementation(libs.kotlinTest)
+            implementation(libs.ktorClientMock)
+        }
+
+        jvmTest.dependencies {
+            runtimeOnly("org.junit.platform:junit-platform-launcher")
+        }
+    }
 
     targets.withType<KotlinNativeTarget>().configureEach {
         binaries {

@@ -1,15 +1,11 @@
 package config
 
-import io.ktor.utils.io.*
-import kotlinx.io.buffered
-import kotlinx.io.files.Path
-import kotlinx.io.files.SystemFileSystem
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import net.mamoe.yamlkt.Yaml
 
 class YamlConfigReader(
-    configPath: String
+    configContentSource: ConfigContentSource
 ) : ConfigReader {
     @Serializable
     data class YamlConfig(
@@ -19,12 +15,8 @@ class YamlConfigReader(
     private var config: YamlConfig? = null
 
     init {
-        if (SystemFileSystem.exists(Path(configPath))) {
-            val yamlContent = SystemFileSystem.source(Path(configPath)).buffered().use {
-                it.readText()
-            }
-
-            config = Yaml().decodeFromString<YamlConfig>(yamlContent)
+        configContentSource.getContent()?.let { content ->
+            config = Yaml.decodeFromString<YamlConfig>(content)
         }
     }
 

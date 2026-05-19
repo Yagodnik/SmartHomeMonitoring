@@ -1,4 +1,5 @@
 import cli.parseCliArgs
+import config.LocalConfigContentSource
 import config.YamlConfigReader
 import dev.scottpierce.envvar.EnvVar
 import kotlinx.coroutines.awaitCancellation
@@ -14,12 +15,15 @@ fun main(args: Array<String>) {
         return
     }
 
-    val configReader = YamlConfigReader(cliConfig.configPath)
+    val configContentSource = LocalConfigContentSource(cliConfig.configPath)
+    val configReader = YamlConfigReader(configContentSource)
 
     if (!configReader.isReady()) {
         cliConfig.printer.println("Configuration not found at ${cliConfig.configPath}!", fg = Color.RED)
 //        return
     }
+
+    println(configReader.listExporters())
 
     cliConfig.printer.println("Exporter initialized successfully.", fg = Color.GREEN)
 
