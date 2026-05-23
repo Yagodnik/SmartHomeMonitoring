@@ -2,6 +2,7 @@ package yandex.parsers.impl
 
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
 import models.MetricValue
 import yandex.parsers.StateParser
 import yandex.parsers.ValueParser
@@ -25,11 +26,21 @@ class ColorSettingStateParser : StateParser {
         )
     }
 
-    override fun parse(state: JsonObject): MetricValue? {
+    override fun parse(state: JsonObject, parameters: JsonObject): MetricValue? {
         val instance = (state["instance"] as? JsonPrimitive)?.content ?: return null
         val valueObject = state["value"] ?: return null
         val value = parsers[instance]?.parse(valueObject) ?: return null
+        var unit = (parameters["unit"] as? JsonPrimitive)?.contentOrNull
 
-        return MetricValue(instance, value)
+        if (instance == INSTANCE_TEMPERATURE_K) {
+            unit = "kelvin"
+        }
+
+        return MetricValue(
+            name =instance,
+            rawValue = value,
+            unit = unit,
+            numericValue = value.toDoubleOrNull()
+        )
     }
 }

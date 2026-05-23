@@ -62,7 +62,7 @@ class YandexScraper(
 
             println("Capabilities (${device.capabilities.size})")
             for (capability in device.capabilities) {
-                val metricValue = capabilityParsers[capability.type]?.parse(capability.state)
+                val metricValue = capabilityParsers[capability.type]?.parse(capability.state, capability.parameters)
                 println("\t${metricValue}")
 
                 metricValue?.let { metric -> metrics.add(
@@ -72,7 +72,7 @@ class YandexScraper(
 
             println("Properties (${device.properties.size})")
             for (property in device.properties) {
-                val metricValue = propertiesParsers[property.type]?.parse(property.state)
+                val metricValue = propertiesParsers[property.type]?.parse(property.state, property.parameters)
                 println("\t${metricValue}")
 
                 metricValue?.let { metric -> metrics.add(

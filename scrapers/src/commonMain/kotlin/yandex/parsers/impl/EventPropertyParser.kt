@@ -7,7 +7,7 @@ import models.MetricValue
 import yandex.parsers.StateParser
 
 class EventPropertyParser : StateParser {
-    override fun parse(state: JsonObject): MetricValue? {
+    override fun parse(state: JsonObject, parameters: JsonObject): MetricValue? {
         val instance = (state["instance"] as? JsonPrimitive)?.contentOrNull ?: return null
         val value = (state["value"] as? JsonPrimitive)?.contentOrNull ?: return null
 

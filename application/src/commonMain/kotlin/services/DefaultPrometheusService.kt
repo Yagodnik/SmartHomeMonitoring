@@ -8,15 +8,15 @@ class DefaultPrometheusService : PrometheusService {
 
         val metricsText = buildString {
             metrics.forEach { metric ->
-                try {
-                    val name = metric.value.name
-                    val value = metric.value.value.toDouble()
+                val metricName = "metric_${metric.value.name}"
+                val metricValue = metric.value.numericValue
 
-                    append("# TYPE $name gauge\n")
-                    append("# HELP $name Auto-collected metric\n")
+                metricValue?.let {
+                    append("# TYPE $metricName gauge\n")
+                    append("# HELP $metricName Auto-collected metric\n")
 
-                    append("$name{device_id=\"${metric.deviceId}\"} $value\n\n")
-                } catch (e: NumberFormatException) {}
+                    append("$metricName{device_id=\"${metric.deviceId}\", device_name=\"${metric.deviceName}\"} $metricValue\n\n")
+                }
             }
         }
 

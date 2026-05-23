@@ -17,5 +17,6 @@ enum class YandexCapabilityType {
 @Serializable
 data class YandexCapability(
     val type: YandexCapabilityType,
+    val parameters: JsonObject,
     val state: JsonObject
 )

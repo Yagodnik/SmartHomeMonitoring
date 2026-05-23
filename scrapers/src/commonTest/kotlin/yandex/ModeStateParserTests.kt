@@ -21,7 +21,7 @@ class ModeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("cleanup_mode", result.name)
-        assertEquals("quick", result.value)
+        assertEquals("quick", result.rawValue)
     }
 
     @Test
@@ -38,7 +38,7 @@ class ModeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("fan_speed", result.name)
-        assertEquals("medium", result.value)
+        assertEquals("medium", result.rawValue)
     }
 
     @Test
@@ -55,7 +55,7 @@ class ModeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("thermostat", result.name)
-        assertEquals("eco", result.value)
+        assertEquals("eco", result.rawValue)
     }
 
     @Test
@@ -72,7 +72,7 @@ class ModeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("program", result.name)
-        assertEquals("cotton", result.value)
+        assertEquals("cotton", result.rawValue)
     }
 
     @Test
@@ -89,7 +89,7 @@ class ModeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("dishwashing_program", result.name)
-        assertEquals("auto", result.value)
+        assertEquals("auto", result.rawValue)
     }
 
     @Test
@@ -106,7 +106,7 @@ class ModeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("coffee_mode", result.name)
-        assertEquals("espresso", result.value)
+        assertEquals("espresso", result.rawValue)
     }
 
     @Test
@@ -123,7 +123,7 @@ class ModeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("tea_mode", result.name)
-        assertEquals("black", result.value)
+        assertEquals("black", result.rawValue)
     }
 
     @Test
@@ -140,7 +140,7 @@ class ModeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("heat_mode", result.name)
-        assertEquals("turbo", result.value)
+        assertEquals("turbo", result.rawValue)
     }
 
     @Test
@@ -272,7 +272,7 @@ class ModeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("fan_speed", result.name)
-        assertEquals("3", result.value)
+        assertEquals("3", result.rawValue)
     }
 
     @Test
@@ -289,6 +289,6 @@ class ModeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("custom_mode", result.name)
-        assertEquals("my_custom_value", result.value)
+        assertEquals("my_custom_value", result.rawValue)
     }
 }

@@ -13,5 +13,6 @@ enum class YandexPropertyType {
 @Serializable
 data class YandexProperty(
     val type: YandexPropertyType,
+    val parameters: JsonObject,
     val state: JsonObject
 )

@@ -5,7 +5,7 @@ import models.MetricValue
 import yandex.parsers.StateParser
 
 class VideoStreamStateParser : StateParser {
-    override fun parse(state: JsonObject): MetricValue? {
+    override fun parse(state: JsonObject, parameters: JsonObject): MetricValue? {
         return null
     }
 }

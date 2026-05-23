@@ -21,7 +21,7 @@ class OnOffStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("on_off", result.name)
-        assertEquals("on", result.value)
+        assertEquals("on", result.rawValue)
     }
 
     @Test
@@ -38,7 +38,7 @@ class OnOffStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("on_off", result.name)
-        assertEquals("off", result.value)
+        assertEquals("off", result.rawValue)
     }
 
     @Test
@@ -143,7 +143,7 @@ class OnOffStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("on_off", result.name)
-        assertEquals("true", result.value)
+        assertEquals("true", result.rawValue)
     }
 
     @Test
@@ -160,7 +160,7 @@ class OnOffStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("on_off", result.name)
-        assertEquals("1", result.value)
+        assertEquals("1", result.rawValue)
     }
 
     @Test

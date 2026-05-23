@@ -21,7 +21,7 @@ class RangeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("brightness", result.name)
-        assertEquals("75", result.value)
+        assertEquals("75", result.rawValue)
     }
 
     @Test
@@ -38,7 +38,7 @@ class RangeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("volume", result.name)
-        assertEquals("30", result.value)
+        assertEquals("30", result.rawValue)
     }
 
     @Test
@@ -55,7 +55,7 @@ class RangeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("temperature", result.name)
-        assertEquals("22", result.value)
+        assertEquals("22", result.rawValue)
     }
 
     @Test
@@ -72,7 +72,7 @@ class RangeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("humidity", result.name)
-        assertEquals("60", result.value)
+        assertEquals("60", result.rawValue)
     }
 
     @Test
@@ -89,7 +89,7 @@ class RangeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("channel", result.name)
-        assertEquals("5", result.value)
+        assertEquals("5", result.rawValue)
     }
 
     @Test
@@ -106,7 +106,7 @@ class RangeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("fan_speed", result.name)
-        assertEquals("3", result.value)
+        assertEquals("3", result.rawValue)
     }
 
     @Test
@@ -123,7 +123,7 @@ class RangeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("brightness_k", result.name)
-        assertEquals("4500", result.value)
+        assertEquals("4500", result.rawValue)
     }
 
     @Test
@@ -140,7 +140,7 @@ class RangeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("brightness", result.name)
-        assertEquals("0", result.value)
+        assertEquals("0", result.rawValue)
     }
 
     @Test
@@ -157,7 +157,7 @@ class RangeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("brightness", result.name)
-        assertEquals("100", result.value)
+        assertEquals("100", result.rawValue)
     }
 
     @Test
@@ -174,7 +174,7 @@ class RangeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("temperature", result.name)
-        assertEquals("21.5", result.value)
+        assertEquals("21.5", result.rawValue)
     }
 
     @Test
@@ -306,7 +306,7 @@ class RangeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("temperature", result.name)
-        assertEquals("-5", result.value)
+        assertEquals("-5", result.rawValue)
     }
 
     @Test
@@ -323,6 +323,6 @@ class RangeStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("custom_range", result.name)
-        assertEquals("123", result.value)
+        assertEquals("123", result.rawValue)
     }
 }

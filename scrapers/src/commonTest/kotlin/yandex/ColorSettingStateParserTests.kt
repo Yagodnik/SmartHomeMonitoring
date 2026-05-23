@@ -26,7 +26,7 @@ class ColorSettingStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals(ColorSettingStateParser.INSTANCE_HSV, result.name)
-        assertEquals("25510050", result.value)
+        assertEquals("25510050", result.rawValue)
     }
 
     @Test
@@ -94,7 +94,7 @@ class ColorSettingStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals(ColorSettingStateParser.INSTANCE_RGB, result.name)
-        assertEquals("13910520", result.value)
+        assertEquals("13910520", result.rawValue)
     }
 
     @Test
@@ -140,7 +140,7 @@ class ColorSettingStateParserTests {
 
         // Assert
         assertNotNull(result)
-        assertEquals("4500", result.value)
+        assertEquals("4500", result.rawValue)
     }
 
     @Test
@@ -175,7 +175,7 @@ class ColorSettingStateParserTests {
 
             // Assert
             assertNotNull(result, "Failed for scene: $scene")
-            assertEquals(scene, result.value)
+            assertEquals(scene, result.rawValue)
         }
     }
 
@@ -192,7 +192,7 @@ class ColorSettingStateParserTests {
 
         // Assert
         assertNotNull(result)
-        assertEquals("unknown_scene", result.value)
+        assertEquals("unknown_scene", result.rawValue)
     }
 
     @Test
@@ -286,7 +286,7 @@ class ColorSettingStateParserTests {
         // Assert
         assertNotNull(result)
         assertEquals("hsv", result.name)
-        assertEquals("25510050", result.value)
+        assertEquals("25510050", result.rawValue)
     }
 
     @Test
@@ -302,7 +302,7 @@ class ColorSettingStateParserTests {
 
         // Assert
         assertNotNull(result)
-        assertEquals("13910520", result.value)
+        assertEquals("13910520", result.rawValue)
     }
 
     @Test
@@ -318,7 +318,7 @@ class ColorSettingStateParserTests {
 
         // Assert
         assertNotNull(result)
-        assertEquals("4500", result.value)
+        assertEquals("4500", result.rawValue)
     }
 
     @Test
@@ -334,6 +334,6 @@ class ColorSettingStateParserTests {
 
         // Assert
         assertNotNull(result)
-        assertEquals("party", result.value)
+        assertEquals("party", result.rawValue)
     }
 }
