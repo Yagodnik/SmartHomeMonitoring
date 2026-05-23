@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
 
     if (!configReader.isReady()) {
         cliConfig.printer.println("Configuration not found at ${cliConfig.configPath}!", fg = Color.RED)
-//        return
+        return
     }
 
     println(configReader.listExporters())
@@ -31,7 +31,8 @@ fun main(args: Array<String>) {
         val monitoringService = DefaultMonitoringService(
             EnvVar["ACCESS_TOKEN"] ?: "No token",
             cliConfig,
-            this
+            this,
+            configReader,
         )
 
         monitoringService.start()

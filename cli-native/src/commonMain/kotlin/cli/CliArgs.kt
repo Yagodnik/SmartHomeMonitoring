@@ -11,7 +11,7 @@ enum class ColorMode { ENABLED, DISABLED }
 
 data class CliConfig(
     val configPath: String,
-    val printer: Printer
+    val printer: Printer,
 )
 
 object CliDefaults {

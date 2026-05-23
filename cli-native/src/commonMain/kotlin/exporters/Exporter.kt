@@ -8,4 +8,6 @@ interface Exporter {
     fun export(snapshot: MetricsSnapshot)
 
     fun stop()
+
+    fun getName(): String
 }

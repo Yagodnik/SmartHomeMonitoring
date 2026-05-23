@@ -2,7 +2,10 @@ package services
 
 import bus.MetricsBus
 import cli.CliConfig
+import config.ConfigReader
 import exporters.CsvExporter
+import exporters.Exporter
+import exporters.ExportersFactory
 import exporters.PrometheusExporter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,19 +25,25 @@ class DefaultMonitoringService(
     token: String,
     private val cliConfig: CliConfig,
     private val scope: CoroutineScope,
+    private val configReader: ConfigReader,
 ) : MonitoringService {
     private val bus = MetricsBus()
     private val api = KtorYandexApi(token)
     private val scraper = YandexScraper(api)
 
-    private val prometheusRegistry = PrometheusRegistry()
-    private val prometheusService = DefaultPrometheusService()
-    private val prometheusServer = PrometheusServer(9091, prometheusRegistry, prometheusService)
+    private val exporters: List<Exporter>
 
-    private val exporters = listOf(
-        CsvExporter(cliConfig),
-        PrometheusExporter(prometheusRegistry)
-    )
+    init {
+        val exporterDefinitions = configReader.listExporters()
+        val createdExporters: MutableList<Exporter> = mutableListOf()
+
+        for (exporterDefinition in exporterDefinitions) {
+            val exporter = ExportersFactory.create(exporterDefinition)
+            createdExporters.add(exporter)
+        }
+
+        exporters = createdExporters
+    }
 
     override fun start() {
         try {
@@ -59,12 +68,9 @@ class DefaultMonitoringService(
                 bus.events.collect { exporter.export(it) }
             }
         }
-
-        prometheusServer.start()
     }
 
     override fun shutdown() {
-        prometheusServer.stop()
         exporters.forEach { exporter -> exporter.stop() }
     }
 }
