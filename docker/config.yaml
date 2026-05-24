@@ -3,5 +3,6 @@ exporters:
   csv:
     path: .
     format: "{{ timestamp }};{{ deviceId }};{{ deviceName }};{{ value }}"
+    outputDir: "/Users/artemyagodnik/Sandbox/SmartHomeMonitoring/docker/log"
   prometheus:
     port: 9091

@@ -11,7 +11,8 @@ class CsvExporterFactory : ExporterFactory {
 
     override fun create(params: ExporterParams): Exporter {
         val format = params.params["format"] ?: DEFAULT_FORMAT
+        val outputDir = params.params["outputDir"] ?: throw IllegalArgumentException("No path provided")
 
-        return CsvExporter(format)
+        return CsvExporter(format, outputDir)
     }
 }
