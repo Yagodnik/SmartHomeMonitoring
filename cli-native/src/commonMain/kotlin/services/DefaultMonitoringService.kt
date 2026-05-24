@@ -19,6 +19,7 @@ import prometheus.PrometheusRegistry
 import prometheus.PrometheusServer
 import yandex.api.KtorYandexApi
 import yandex.scraper.YandexScraper
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 class DefaultMonitoringService(
@@ -32,6 +33,10 @@ class DefaultMonitoringService(
     private val scraper = YandexScraper(api)
 
     private val exporters: List<Exporter>
+
+    companion object {
+        val DEFAULT_POLLING_INTERVAL = 15.seconds
+    }
 
     init {
         val exporterDefinitions = configReader.listExporters()
@@ -53,13 +58,15 @@ class DefaultMonitoringService(
             return
         }
 
+        val pollingInterval = configReader.getPollingInterval()?.seconds ?: DEFAULT_POLLING_INTERVAL
+
         scope.launch {
             while (isActive) {
                 val metrics = scraper.scrape()
                 val snapshot = MetricsSnapshot(metrics)
                 bus.publish(snapshot)
 
-                delay(15.seconds)
+                delay(pollingInterval)
             }
         }
 

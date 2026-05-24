@@ -23,8 +23,6 @@ fun main(args: Array<String>) {
         return
     }
 
-    println(configReader.listExporters())
-
     cliConfig.printer.println("Exporter initialized successfully.", fg = Color.GREEN)
 
     runBlocking {

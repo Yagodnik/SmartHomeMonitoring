@@ -1,5 +1,6 @@
 package config
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import net.mamoe.yamlkt.Yaml
@@ -9,7 +10,8 @@ class YamlConfigReader(
 ) : ConfigReader {
     @Serializable
     data class YamlConfig(
-        val exporters: Map<String, Map<String, String>>
+        @SerialName("polling-interval") val pollingInterval: Long,
+        @SerialName("exporters") val exporters: Map<String, Map<String, String>>
     )
 
     private var config: YamlConfig? = null
@@ -42,5 +44,9 @@ class YamlConfigReader(
         }
 
         return result
+    }
+
+    override fun getPollingInterval(): Long? {
+        return config?.pollingInterval
     }
 }

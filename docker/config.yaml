@@ -1,5 +1,7 @@
+polling-interval: 15
 exporters:
   csv:
     path: .
+    format: "{{ timestamp }};{{ deviceId }};{{ deviceName }};{{ value }}"
   prometheus:
     port: 9091

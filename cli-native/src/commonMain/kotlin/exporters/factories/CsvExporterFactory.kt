@@ -5,7 +5,13 @@ import exporters.CsvExporter
 import exporters.Exporter
 
 class CsvExporterFactory : ExporterFactory {
+    companion object {
+        const val DEFAULT_FORMAT = "{{ deviceName }} - {{ value }}"
+    }
+
     override fun create(params: ExporterParams): Exporter {
-        return CsvExporter()
+        val format = params.params["format"] ?: DEFAULT_FORMAT
+
+        return CsvExporter(format)
     }
 }
