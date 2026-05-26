@@ -1,45 +1,25 @@
 package services
 
+import Scraper
 import bus.MetricsBus
-import cli.CliConfig
-import config.ConfigReader
-import exporters.CsvExporter
+import config.ExporterParams
+import domain.MonitoringStartResult
 import exporters.Exporter
 import exporters.ExportersFactory
-import exporters.PrometheusExporter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import models.MetricsSnapshot
-import printer.Color
-import prometheus.PrometheusRegistry
-import prometheus.PrometheusServer
-import yandex.api.KtorYandexApi
-import yandex.scraper.YandexScraper
-import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Duration
 
 class DefaultMonitoringService(
-    token: String,
-    private val cliConfig: CliConfig,
     private val scope: CoroutineScope,
-    private val configReader: ConfigReader,
+    exporterDefinitions: List<ExporterParams>,
+    private val pollingInterval: Duration,
+    private val scraper: Scraper
 ) : MonitoringService {
     private val bus = MetricsBus()
-    private val api = KtorYandexApi(token)
-    private val scraper = YandexScraper(api)
-
     private val exporters: List<Exporter>
 
-    companion object {
-        val DEFAULT_POLLING_INTERVAL = 15.seconds
-    }
-
     init {
-        val exporterDefinitions = configReader.listExporters()
         val createdExporters: MutableList<Exporter> = mutableListOf()
 
         for (exporterDefinition in exporterDefinitions) {
@@ -50,15 +30,12 @@ class DefaultMonitoringService(
         exporters = createdExporters
     }
 
-    override fun start() {
+    override suspend fun start() : MonitoringStartResult {
         try {
             exporters.forEach { it.start() }
         } catch (e: Exception) {
-            cliConfig.printer.println("Failed to start exporter due to: ${e.message}", fg = Color.RED)
-            return
+            return MonitoringStartResult.Failure("Failed to start exporter due to: ${e.message}")
         }
-
-        val pollingInterval = configReader.getPollingInterval()?.seconds ?: DEFAULT_POLLING_INTERVAL
 
         scope.launch {
             while (isActive) {
@@ -75,6 +52,8 @@ class DefaultMonitoringService(
                 bus.events.collect { exporter.export(it) }
             }
         }
+
+        return MonitoringStartResult.Success
     }
 
     override fun shutdown() {

@@ -13,13 +13,14 @@ dependencies {
     commonMainImplementation(project(":scrapers"))
     commonMainImplementation(project(":application"))
 
-    commonMainImplementation(libs.kotlinxCli)
     commonMainImplementation(libs.yamlkt)
     commonMainImplementation(libs.kotlinxIoCore)
     commonMainImplementation(libs.kotlinEnvVar)
     commonMainImplementation(libs.kotlinxDatetime)
     commonMainImplementation(libs.ktorServerCore)
     commonMainImplementation(libs.ktorServerCio)
+    commonMainImplementation(libs.clikt)
+    commonMainImplementation(libs.mordant)
 }
 
 kotlin {
@@ -32,6 +33,7 @@ kotlin {
     jvm()
     macosArm64()
     macosX64()
+    linuxArm64()
     linuxX64()
     mingwX64()
 

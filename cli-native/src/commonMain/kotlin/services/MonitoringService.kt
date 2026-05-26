@@ -1,9 +1,9 @@
 package services
 
+import domain.MonitoringStartResult
+
 interface MonitoringService {
-    fun start()
-
-
+    suspend fun start() : MonitoringStartResult
 
     fun shutdown()
 }

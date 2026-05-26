@@ -1,17 +1,20 @@
 [versions]
 kotlin = "2.0.0"
 kotlinxSerialization = "1.7.3"
-kotlinxCli = "0.3.6"
 ktor = "3.0.0"
 yamlkt = "0.13.0"
 kotlinxIoCore = "0.5.4"
 kotlinEnvVar = "1.0.4"
 kotlinxDatetime = "0.6.1"
 kotlinxCoroutines = "1.9.0"
+clikt = "5.0.0"
+mordant = "3.0.0"
 
 [libraries]
+clikt = { module = "com.github.ajalt.clikt:clikt", version.ref = "clikt" }
+mordant = { module = "com.github.ajalt.mordant:mordant", version.ref = "mordant" }
+
 kotlinxSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
-kotlinxCli = { module = "org.jetbrains.kotlinx:kotlinx-cli", version.ref = "kotlinxCli" }
 kotlinxIoCore = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinxIoCore" }
 kotlinEnvVar = { module = "dev.scottpierce:kotlin-env-var", version.ref = "kotlinEnvVar" }
 kotlinxDatetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
