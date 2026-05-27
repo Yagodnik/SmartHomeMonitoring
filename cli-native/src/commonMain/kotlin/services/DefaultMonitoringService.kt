@@ -30,7 +30,7 @@ class DefaultMonitoringService(
         exporters = createdExporters
     }
 
-    override suspend fun start() : MonitoringStartResult {
+    override fun start() : MonitoringStartResult {
         try {
             exporters.forEach { it.start() }
         } catch (e: Exception) {
@@ -49,7 +49,9 @@ class DefaultMonitoringService(
 
         exporters.forEach { exporter ->
             scope.launch(Dispatchers.IO) {
-                bus.events.collect { exporter.export(it) }
+                bus.events.collect {
+                    exporter.export(it)
+                }
             }
         }
 

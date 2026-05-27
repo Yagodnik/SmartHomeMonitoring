@@ -11,6 +11,7 @@ class YamlConfigReader(
     @Serializable
     data class YamlConfig(
         @SerialName("polling-interval") val pollingInterval: Long,
+        @SerialName("port") val serverPort: Int,
         @SerialName("exporters") val exporters: Map<String, Map<String, String>>
     )
 
@@ -48,5 +49,9 @@ class YamlConfigReader(
 
     override fun getPollingInterval(): Long? {
         return config?.pollingInterval
+    }
+
+    override fun getServerPort(): Int? {
+        return config?.serverPort
     }
 }

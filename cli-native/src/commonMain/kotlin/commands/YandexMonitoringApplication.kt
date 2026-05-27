@@ -14,8 +14,11 @@ import config.LocalConfigContentSource
 import config.YamlConfigReader
 import dev.scottpierce.envvar.EnvVar
 import domain.MonitoringStartResult
+import http.HttpServer
 import kotlinx.coroutines.*
+import prometheus.PrometheusRegistry
 import services.DefaultMonitoringService
+import services.DefaultPrometheusService
 import services.YandexSmartHomeService
 import yandex.api.KtorYandexApi
 import yandex.api.YandexApi
@@ -37,12 +40,15 @@ class YandexMonitoringApplication(
 
     val smartHomeService = YandexSmartHomeService()
 
-    val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-
     init {
         context { terminal = t }
 
         subcommands(ListDevicesCommand(smartHomeService))
+    }
+
+    companion object {
+        val registry = PrometheusRegistry()
+        const val DEFAULT_PORT = 9091
     }
 
     override fun run() {
@@ -55,15 +61,24 @@ class YandexMonitoringApplication(
 
         val exporterDefinitions = configReader.listExporters()
         val pollingInterval = configReader.getPollingInterval()?.seconds ?: 15.seconds
+        val port = configReader.getServerPort() ?: DEFAULT_PORT
 
-        val monitoringService = DefaultMonitoringService(
-            scope,
-            exporterDefinitions,
-            pollingInterval,
-            scraper,
+        val httpServer = HttpServer(
+            port,
+            registry,
+            DefaultPrometheusService()
         )
 
+        httpServer.start()
+
         runBlocking {
+            val monitoringService = DefaultMonitoringService(
+                this,
+                exporterDefinitions,
+                pollingInterval,
+                scraper,
+            )
+
             val result = monitoringService.start()
 
             if (result is MonitoringStartResult.Success) {
@@ -72,15 +87,10 @@ class YandexMonitoringApplication(
                 terminal.println(TextColors.red("Monitoring starting failed ${result.message}"))
                 return@runBlocking
             }
-
-            try {
-                awaitCancellation()
-            } finally {
-                println("Stopping monitoring service...")
-                scope.cancel()
-                monitoringService.shutdown()
-                println("Shutting down...")
-            }
         }
+
+        httpServer.stop()
+
+        terminal.println(TextColors.green("Bye!"))
     }
 }

@@ -1,4 +1,4 @@
-package domain
+package models
 
 data class Device(
     val deviceId: String,

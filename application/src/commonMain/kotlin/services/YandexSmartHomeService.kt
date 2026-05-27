@@ -1,6 +1,6 @@
 package services
 
-import domain.Device
+import models.Device
 
 class YandexSmartHomeService(
 ) : SmartHomeService {

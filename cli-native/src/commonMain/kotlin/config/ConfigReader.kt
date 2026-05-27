@@ -6,4 +6,6 @@ interface ConfigReader {
     fun listExporters(): List<ExporterParams>
 
     fun getPollingInterval(): Long?
+
+    fun getServerPort(): Int?
 }

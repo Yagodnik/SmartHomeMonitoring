@@ -1,6 +1,6 @@
 package services
 
-import domain.Device
+import models.Device
 
 interface SmartHomeService {
     fun listDevices(): List<Device>

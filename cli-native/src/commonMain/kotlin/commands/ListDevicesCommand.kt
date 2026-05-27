@@ -3,7 +3,6 @@ package commands
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.mordant.table.table
-import com.github.ajalt.mordant.terminal.Terminal
 import services.SmartHomeService
 
 class ListDevicesCommand(

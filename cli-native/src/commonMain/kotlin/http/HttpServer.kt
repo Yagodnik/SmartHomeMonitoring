@@ -1,13 +1,18 @@
-package prometheus
+package http
 
-import io.ktor.http.*
-import io.ktor.server.cio.*
-import io.ktor.server.engine.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.cio.CIO
+import io.ktor.server.cio.CIOApplicationEngine
+import io.ktor.server.engine.EmbeddedServer
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
+import prometheus.PrometheusRegistry
 import services.PrometheusService
 
-class PrometheusServer(
+class HttpServer(
     private val port: Int,
     private val registry: PrometheusRegistry,
     private val prometheusService: PrometheusService
@@ -23,6 +28,10 @@ class PrometheusServer(
                     val metricsText = prometheusService.formatToPrometheus(snapshot)
 
                     call.respondText(metricsText, contentType)
+                }
+
+                get("/health") {
+                    call.respondText("Healthy", status = HttpStatusCode.OK)
                 }
             }
         }.start(wait = false)

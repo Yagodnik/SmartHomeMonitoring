@@ -1,8 +1,8 @@
 polling-interval: 15
+port: 9091
 exporters:
   csv:
     path: .
     format: "{{ timestamp }};{{ deviceId }};{{ deviceName }};{{ value }}"
     outputDir: "/Users/artemyagodnik/Sandbox/SmartHomeMonitoring/docker/log"
-  prometheus:
-    port: 9091
+  prometheus: {}

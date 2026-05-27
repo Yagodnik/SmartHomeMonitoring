@@ -1,0 +1,44 @@
+FROM gradle:8.7-jdk21 AS builder
+
+WORKDIR /app
+COPY . .
+
+RUN <<EOF
+set -e
+
+ARCH=$(uname -m)
+case "$ARCH" in
+  x86_64)
+    KT_TARGET="linuxX64"
+    echo "🎯 Detected x86_64 → Kotlin target: $KT_TARGET"
+    ;;
+  aarch64)
+    KT_TARGET="linuxArm64"
+    echo "🎯 Detected aarch64 → Kotlin target: $KT_TARGET"
+    ;;
+  *)
+    echo "❌ Unsupported architecture: $ARCH"
+    exit 1
+    ;;
+esac
+
+./gradlew :cli-native:linkReleaseExecutable${KT_TARGET} \
+  --no-daemon \
+  --console=plain \
+
+mkdir -p /app/build/output
+find cli-native/build/bin -name "*.kexe" -type f -exec cp {} /app/build/output/app.kexe \;
+echo "✅ Binary ready at /app/build/output/app.kexe"
+EOF
+
+FROM gcr.io/distroless/cc-debian12
+
+WORKDIR /app
+
+COPY --from=builder --chown=nonroot:nonroot \
+  /app/build/output/app.kexe \
+  /app/app
+
+RUN chmod +x /app/app
+USER nonroot
+ENTRYPOINT ["/app/app"]
