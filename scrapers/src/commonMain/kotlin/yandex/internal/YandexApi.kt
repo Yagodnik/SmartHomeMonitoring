@@ -1,4 +1,4 @@
-package yandex.api
+package yandex.internal
 
 import yandex.models.YandexUserInfo
 

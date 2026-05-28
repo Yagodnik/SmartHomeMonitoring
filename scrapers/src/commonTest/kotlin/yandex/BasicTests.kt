@@ -3,7 +3,7 @@ package yandex
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockEngineConfig
-import yandex.api.KtorYandexApi
+import yandex.internal.KtorYandexApi
 import yandex.scraper.YandexScraper
 import kotlin.test.Test
 

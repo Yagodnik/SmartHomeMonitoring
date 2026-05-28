@@ -16,3 +16,16 @@ services:
     image: prom/prometheus:v3.10.0
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  monitoring-app:
+    image: smart-home-monitoring-jvm:latest
+    ports:
+      - "9091:9091"
+    environment:
+      ACCESS_TOKEN: "${ACCESS_TOKEN}"
+    volumes:
+      - ./config.yaml:/config.yaml
+    command: ["-c", "/config.yaml"]
+    depends_on:
+      - prometheus
+      - grafana

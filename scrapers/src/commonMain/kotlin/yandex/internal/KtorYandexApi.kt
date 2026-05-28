@@ -1,4 +1,4 @@
-package yandex.api
+package yandex.internal
 
 import io.ktor.client.*
 import io.ktor.client.call.*

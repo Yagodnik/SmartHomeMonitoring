@@ -9,20 +9,6 @@ plugins {
 group = "ru.yagodnik"
 version = "1.0-SNAPSHOT"
 
-dependencies {
-    commonMainImplementation(project(":scrapers"))
-    commonMainImplementation(project(":application"))
-
-    commonMainImplementation(libs.yamlkt)
-    commonMainImplementation(libs.kotlinxIoCore)
-    commonMainImplementation(libs.kotlinEnvVar)
-    commonMainImplementation(libs.kotlinxDatetime)
-    commonMainImplementation(libs.ktorServerCore)
-    commonMainImplementation(libs.ktorServerCio)
-    commonMainImplementation(libs.clikt)
-    commonMainImplementation(libs.mordant)
-}
-
 kotlin {
     jvm {
         compilerOptions {
@@ -33,11 +19,40 @@ kotlin {
     jvm()
     macosArm64()
     macosX64()
-    linuxArm64()
     linuxX64()
     mingwX64()
 
+//    linuxArm64 {
+//        binaries {
+//            executable {
+//                entryPoint = "main"
+//
+//                val libgccAarch64 = fileTree("/usr/lib/gcc-cross/aarch64-linux-gnu") {
+//                    include("*/libgcc.a")
+//                }.files.maxByOrNull { it.parentFile.name }
+//                if (libgccAarch64 != null) {
+//                    binaries.all {
+//                        linkerOpts(libgccAarch64.absolutePath)
+//                    }
+//                }
+//            }
+//        }
+//    }
+
     sourceSets {
+        commonMain.dependencies {
+            implementation(project(":scrapers"))
+            implementation(project(":application"))
+            implementation(libs.yamlkt)
+            implementation(libs.kotlinxIoCore)
+            implementation(libs.kotlinEnvVar)
+            implementation(libs.kotlinxDatetime)
+            implementation(libs.ktorServerCore)
+            implementation(libs.ktorServerCio)
+            implementation(libs.clikt)
+            implementation(libs.mordant)
+        }
+
         commonTest.dependencies {
             implementation(libs.kotlinTest)
             implementation(libs.ktorClientMock)
@@ -55,4 +70,17 @@ kotlin {
             }
         }
     }
+}
+
+tasks.named<Jar>("jvmJar") {
+    manifest {
+        attributes["Main-Class"] = "MainKt"
+    }
+
+    from(configurations.getByName("jvmRuntimeClasspath").map {
+        if (it.isDirectory) it else zipTree(it)
+    })
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
 }

@@ -2,7 +2,6 @@ package commands
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.context
-import com.github.ajalt.clikt.core.subcommands
 import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.help
@@ -15,13 +14,13 @@ import config.YamlConfigReader
 import dev.scottpierce.envvar.EnvVar
 import domain.MonitoringStartResult
 import http.HttpServer
-import kotlinx.coroutines.*
+import kotlinx.coroutines.runBlocking
 import prometheus.PrometheusRegistry
 import services.DefaultMonitoringService
 import services.DefaultPrometheusService
-import services.YandexSmartHomeService
-import yandex.api.KtorYandexApi
-import yandex.api.YandexApi
+import yandex.api.YandexSmartHomeApi
+import yandex.internal.KtorYandexApi
+import yandex.internal.YandexApi
 import yandex.scraper.YandexScraper
 import kotlin.time.Duration.Companion.seconds
 
@@ -38,12 +37,12 @@ class YandexMonitoringApplication(
         .help("Path to .yaml configuration file")
         .required()
 
-    val smartHomeService = YandexSmartHomeService()
+//    val smartHomeService: SmartHomeService
 
     init {
         context { terminal = t }
 
-        subcommands(ListDevicesCommand(smartHomeService))
+//        subcommands(ListDevicesCommand(smartHomeService))
     }
 
     companion object {
@@ -53,8 +52,10 @@ class YandexMonitoringApplication(
 
     override fun run() {
         val token = EnvVar["ACCESS_TOKEN"] ?: tokenArgument
-        val api: YandexApi = KtorYandexApi(token)
-        val scraper = YandexScraper(api)
+        val internalApi: YandexApi = KtorYandexApi(token)
+        val scraper = YandexScraper(internalApi)
+        val publicApi = YandexSmartHomeApi(internalApi)
+//        smartHomeService = YandexSmartHomeService(publicApi)
 
         val configContentSource = LocalConfigContentSource(configArgument)
         val configReader = YamlConfigReader(configContentSource)
