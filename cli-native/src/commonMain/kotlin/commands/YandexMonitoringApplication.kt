@@ -1,9 +1,10 @@
 package commands
 
+import app.AppServices
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.context
+import com.github.ajalt.clikt.core.subcommands
 import com.github.ajalt.clikt.core.terminal
-import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.help
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
@@ -11,38 +12,32 @@ import com.github.ajalt.mordant.rendering.TextColors
 import com.github.ajalt.mordant.terminal.Terminal
 import config.LocalConfigContentSource
 import config.YamlConfigReader
-import dev.scottpierce.envvar.EnvVar
 import domain.MonitoringStartResult
 import http.HttpServer
 import kotlinx.coroutines.runBlocking
 import prometheus.PrometheusRegistry
 import services.DefaultMonitoringService
 import services.DefaultPrometheusService
-import yandex.api.YandexSmartHomeApi
-import yandex.internal.KtorYandexApi
-import yandex.internal.YandexApi
-import yandex.scraper.YandexScraper
 import kotlin.time.Duration.Companion.seconds
 
 class YandexMonitoringApplication(
-    t: Terminal
+    t: Terminal,
+    private val appServices: AppServices,
 ) : CliktCommand("smart-home-monitoring") {
     override val invokeWithoutSubcommand = true
-
-    val tokenArgument by option("-t", "--token")
-        .help("OAuth2 access token for yandex smart home api")
-        .default("no token")
 
     val configArgument by option("-c", "--config")
         .help("Path to .yaml configuration file")
         .required()
 
-//    val smartHomeService: SmartHomeService
-
     init {
         context { terminal = t }
 
-//        subcommands(ListDevicesCommand(smartHomeService))
+        subcommands(
+            ListDevicesCommand(appServices.smartHomeService),
+            PrintYandexAccountInfoCommand(appServices.accountService),
+            LogoutYandexAccountCommand()
+        )
     }
 
     companion object {
@@ -51,11 +46,9 @@ class YandexMonitoringApplication(
     }
 
     override fun run() {
-        val token = EnvVar["ACCESS_TOKEN"] ?: tokenArgument
-        val internalApi: YandexApi = KtorYandexApi(token)
-        val scraper = YandexScraper(internalApi)
-        val publicApi = YandexSmartHomeApi(internalApi)
-//        smartHomeService = YandexSmartHomeService(publicApi)
+        if (currentContext.invokedSubcommand != null) {
+            return
+        }
 
         val configContentSource = LocalConfigContentSource(configArgument)
         val configReader = YamlConfigReader(configContentSource)
@@ -77,7 +70,7 @@ class YandexMonitoringApplication(
                 this,
                 exporterDefinitions,
                 pollingInterval,
-                scraper,
+                appServices.scraper,
             )
 
             val result = monitoringService.start()

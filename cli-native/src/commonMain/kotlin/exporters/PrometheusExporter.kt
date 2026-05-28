@@ -8,7 +8,6 @@ class PrometheusExporter(
 ) : Exporter {
     companion object {
         const val EXPORTER_NAME = "prometheus"
-        const val DEFAULT_PORT = 9091
     }
 
     override fun start() = Unit

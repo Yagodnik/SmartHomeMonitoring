@@ -9,6 +9,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.delay
 import kotlinx.serialization.json.Json
+import yandex.models.YandexAccountInfo
 import yandex.models.YandexDeviceCodeBody
 import yandex.models.YandexTokenBody
 import yandex.models.YandexUserInfo
@@ -29,6 +30,7 @@ class KtorYandexApi(
     companion object {
         private const val AUTH_BASE_URL = "https://oauth.yandex.ru"
         private const val BASE_URL = "https://api.iot.yandex.net/v1.0"
+        private const val ACCOUNT_BASE_URL = "https://login.yandex.ru/info"
 
         private const val USER_INFO = "/user/info"
         private const val REQUEST_CODE = "/device/code"
@@ -62,6 +64,14 @@ class KtorYandexApi(
             client.get("$BASE_URL$USER_INFO") {
                 header(HttpHeaders.Authorization, "Bearer $token")
             }.body<YandexUserInfo>()
+        }
+    }
+
+    override suspend fun getAccountInfo(): Result<YandexAccountInfo> {
+        return runCatching {
+            client.get(ACCOUNT_BASE_URL) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+            }.body<YandexAccountInfo>()
         }
     }
 
