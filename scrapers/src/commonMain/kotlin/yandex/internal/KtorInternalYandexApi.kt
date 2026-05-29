@@ -15,8 +15,10 @@ import yandex.models.YandexTokenBody
 import yandex.models.YandexUserInfo
 import kotlin.time.Duration.Companion.seconds
 
-class KtorYandexApi(
+class KtorInternalYandexApi(
     private val token: String,
+    private val clientId: String? = null,
+    private val clientSecret: String? = null,
     private val client: HttpClient = HttpClient {
         install(ContentNegotiation) {
             json(Json {
@@ -24,9 +26,7 @@ class KtorYandexApi(
             })
         }
     },
-    private val clientId: String? = null,
-    private val clientSecret: String? = null,
-) : YandexApi {
+) : InternalYandexApi {
     companion object {
         private const val AUTH_BASE_URL = "https://oauth.yandex.ru"
         private const val BASE_URL = "https://api.iot.yandex.net/v1.0"
@@ -40,14 +40,31 @@ class KtorYandexApi(
         private const val GRANT_TYPE = "device_code"
     }
 
-    override suspend fun requestOauthToken(): String? {
-        val deviceCode = retrieveUserCode() ?: return null
+    override suspend fun requestCode(): YandexDeviceCodeBody? {
+        val response = client.post("$AUTH_BASE_URL$REQUEST_CODE") {
+            contentType(ContentType.Application.FormUrlEncoded)
 
-        val requestsCount = deviceCode.expiresIn / deviceCode.interval
-        val interval = deviceCode.interval
+            setBody(FormDataContent(Parameters.build {
+                append("client_id", clientId ?: "")
+                append("scope", AUTH_SCOPE)
+            }))
+        }
+
+        if (response.status.isSuccess()) {
+            return response.body<YandexDeviceCodeBody>()
+        }
+
+        println(response.status.value)
+
+        return null
+    }
+
+    override suspend fun exchangeForOauthToken(deviceCodeDto: YandexDeviceCodeBody): String? {
+        val requestsCount = deviceCodeDto.expiresIn / deviceCodeDto.interval
+        val interval = deviceCodeDto.interval
 
         (1..requestsCount).forEach { _ ->
-            val tokenBody = exchangeForToken(deviceCode.deviceCode)
+            val tokenBody = exchangeForToken(deviceCodeDto.deviceCode)
 
             if (tokenBody != null) {
                 return tokenBody.accessToken
@@ -73,23 +90,6 @@ class KtorYandexApi(
                 header(HttpHeaders.Authorization, "Bearer $token")
             }.body<YandexAccountInfo>()
         }
-    }
-
-    private suspend fun retrieveUserCode(): YandexDeviceCodeBody? {
-        val response = client.post("$AUTH_BASE_URL$REQUEST_CODE") {
-            contentType(ContentType.Application.FormUrlEncoded)
-
-            setBody(FormDataContent(Parameters.build {
-                append("client_id", clientId ?: "")
-                append("scope", AUTH_SCOPE)
-            }))
-        }
-
-        if (response.status.isSuccess()) {
-            return response.body<YandexDeviceCodeBody>()
-        }
-
-        return null
     }
 
     private suspend fun exchangeForToken(code: String) : YandexTokenBody? {

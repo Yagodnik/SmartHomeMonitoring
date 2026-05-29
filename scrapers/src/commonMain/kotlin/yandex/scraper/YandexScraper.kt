@@ -3,7 +3,7 @@ package yandex.scraper
 import Scraper
 import kotlinx.serialization.json.Json
 import models.Metric
-import yandex.internal.YandexApi
+import yandex.internal.InternalYandexApi
 import yandex.models.YandexCapabilityType
 import yandex.models.YandexPropertyType
 import yandex.models.YandexUserInfo
@@ -11,7 +11,7 @@ import yandex.parsers.StateParser
 import yandex.parsers.impl.*
 
 class YandexScraper(
-    private val api: YandexApi,
+    private val api: InternalYandexApi,
 ) : Scraper {
     private val json = Json {
         prettyPrint = true

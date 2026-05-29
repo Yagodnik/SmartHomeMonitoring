@@ -51,6 +51,7 @@ kotlin {
             implementation(libs.ktorServerCio)
             implementation(libs.clikt)
             implementation(libs.mordant)
+            implementation(libs.qrcodeKotlin)
         }
 
         commonTest.dependencies {

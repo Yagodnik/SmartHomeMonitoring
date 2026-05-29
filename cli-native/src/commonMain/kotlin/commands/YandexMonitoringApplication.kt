@@ -36,7 +36,8 @@ class YandexMonitoringApplication(
         subcommands(
             ListDevicesCommand(appServices.smartHomeService),
             PrintYandexAccountInfoCommand(appServices.accountService),
-            LogoutYandexAccountCommand()
+            LoginYandexAccountCommand(appServices.accountService),
+            LogoutYandexAccountCommand(),
         )
     }
 

@@ -9,6 +9,7 @@ kotlinxDatetime = "0.6.1"
 kotlinxCoroutines = "1.9.0"
 clikt = "5.0.0"
 mordant = "3.0.0"
+qrcodeKotlin = "0.3.0"
 
 [libraries]
 clikt = { module = "com.github.ajalt.clikt:clikt", version.ref = "clikt" }
@@ -32,6 +33,7 @@ ktorServerCore = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 ktorServerCio  = { module = "io.ktor:ktor-server-cio", version.ref = "ktor" }
 
 yamlkt = { module = "net.mamoe.yamlkt:yamlkt", version.ref = "yamlkt" }
+qrcodeKotlin = { module = "io.github.goquati:qr", version.ref = "qrcodeKotlin" }
 
 kotlinTest = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 

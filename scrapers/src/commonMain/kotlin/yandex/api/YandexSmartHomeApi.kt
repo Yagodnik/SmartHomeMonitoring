@@ -3,13 +3,13 @@ package yandex.api
 import SmartHomeApi
 import models.Account
 import models.Device
-import yandex.internal.YandexApi
+import yandex.internal.InternalYandexApi
 
 class YandexSmartHomeApi(
-    private val api: YandexApi,
+    private val internalApi: InternalYandexApi,
 ) : SmartHomeApi {
     override suspend fun listDevices(): List<Device> {
-        val result = api.queryUserInfo()
+        val result = internalApi.queryUserInfo()
 
         return result.fold(
             onSuccess = {
@@ -27,7 +27,7 @@ class YandexSmartHomeApi(
     }
 
     override suspend fun getAccount(): Account {
-        val accountInfo = api.getAccountInfo()
+        val accountInfo = internalApi.getAccountInfo()
 
         return accountInfo.fold(
             onSuccess = { Account(it.displayName, it.defaultEmail)},

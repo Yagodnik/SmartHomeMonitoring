@@ -1,10 +1,13 @@
 package yandex.internal
 
 import yandex.models.YandexAccountInfo
+import yandex.models.YandexDeviceCodeBody
 import yandex.models.YandexUserInfo
 
-interface YandexApi {
-    suspend fun requestOauthToken(): String?
+interface InternalYandexApi {
+    suspend fun requestCode(): YandexDeviceCodeBody?
+
+    suspend fun exchangeForOauthToken(deviceCodeDto: YandexDeviceCodeBody): String?
 
     suspend fun queryUserInfo() : Result<YandexUserInfo>
 

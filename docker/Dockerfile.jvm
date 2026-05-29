@@ -2,7 +2,6 @@ FROM gradle:8.7-jdk21 AS builder
 WORKDIR /app
 COPY . .
 
-RUN ./gradlew clean --refresh-dependencies --no-daemon
 RUN ./gradlew :cli-native:jvmJar  --no-daemon --console=plain
 
 FROM eclipse-temurin:21-jre-alpine
