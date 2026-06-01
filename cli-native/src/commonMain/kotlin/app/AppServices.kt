@@ -2,6 +2,7 @@ package app
 
 import Scraper
 import SmartHomeApi
+import dev.scottpierce.envvar.EnvVar
 import services.AccountService
 import services.SmartHomeService
 import services.YandexAccountService
@@ -22,7 +23,8 @@ data class AppServices(
         fun createYandexServices(token: String) : AppServices {
             val internalApi: InternalYandexApi = KtorInternalYandexApi(
                 token,
-                "")
+                EnvVar["YANDEX_CLIENT_ID"],
+                EnvVar["YANDEX_CLIENT_SECRET"])
             val scraper = YandexScraper(internalApi)
             val publicApi = YandexSmartHomeApi(internalApi)
             val smartHomeService = YandexSmartHomeService(publicApi)

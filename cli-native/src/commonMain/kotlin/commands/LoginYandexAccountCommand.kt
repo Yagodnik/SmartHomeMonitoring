@@ -13,19 +13,21 @@ class LoginYandexAccountCommand(
 ) : CliktCommand("login-yandex") {
     override fun run() {
         runBlocking {
-            val userCode = accountService.requestUserCode()
-            if (userCode == null) {
+            val session = accountService.createAuthSession()
+
+            val authData = session.requestUserCode()
+            if (authData == null) {
                 terminal.println(TextColors.red("Failed to receive user code!"))
                 return@runBlocking
             }
 
-            val lines = encodeAsQrCode(userCode)
+            val lines = encodeAsQrCode(authData.verificationUrl)
             terminal.println(lines)
 
-            terminal.println("Your user code is ${TextColors.brightBlue(userCode)}")
+            terminal.println("Your user code is ${TextColors.brightBlue(authData.userCode)}")
             terminal.println("" +
                     "Visit link: " +
-                    TextStyles.italic(TextColors.brightBlue("https://google.com")) +
+                    TextStyles.italic(TextColors.brightBlue(authData.verificationUrl)) +
                     " or scan " +
                     TextStyles.italic(TextColors.brightBlue("qr code")) +
                     " above")
@@ -33,7 +35,7 @@ class LoginYandexAccountCommand(
             terminal.println(TextStyles.bold("Enter this code at the text input on the website!"))
             terminal.println(TextColors.brightBlue("Trying to login..."))
 
-            val token = accountService.exchangeForToken()
+            val token = session.exchangeForToken()
 
             if (token == null) {
                 terminal.println(TextColors.red("Failed to login"))
@@ -41,6 +43,8 @@ class LoginYandexAccountCommand(
             }
 
             terminal.println(TextColors.green("Successfully logged into the Yandex Account"))
+
+            // Save token
         }
     }
 }
