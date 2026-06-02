@@ -1,6 +1,7 @@
 package services
 
 import Scraper
+import bus.DefaultMetricsBus
 import bus.MetricsBus
 import config.ExporterParams
 import domain.MonitoringStartResult
@@ -8,15 +9,16 @@ import exporters.Exporter
 import exporters.ExportersFactory
 import kotlinx.coroutines.*
 import models.MetricsSnapshot
+import models.ScrapeResult
 import kotlin.time.Duration
 
 class DefaultMonitoringService(
     private val scope: CoroutineScope,
     exporterDefinitions: List<ExporterParams>,
     private val pollingInterval: Duration,
-    private val scraper: Scraper
+    private val scraper: Scraper,
+    private val bus: MetricsBus
 ) : MonitoringService {
-    private val bus = MetricsBus()
     private val exporters: List<Exporter>
 
     init {
@@ -39,9 +41,17 @@ class DefaultMonitoringService(
 
         scope.launch {
             while (isActive) {
-                val metrics = scraper.scrape()
-                val snapshot = MetricsSnapshot(metrics)
-                bus.publish(snapshot)
+                when (val result = scraper.scrape()) {
+                    is ScrapeResult.Success -> {
+                        val snapshot = MetricsSnapshot(result.metrics)
+                        bus.publish(snapshot)
+                    }
+
+                    is ScrapeResult.Error -> {
+                        // TODO: Refactor this
+                        println("Failed to scrape due to: ${result.error}")
+                    }
+                }
 
                 delay(pollingInterval)
             }
@@ -49,7 +59,7 @@ class DefaultMonitoringService(
 
         exporters.forEach { exporter ->
             scope.launch(Dispatchers.IO) {
-                bus.events.collect {
+                bus.getEvents().collect {
                     exporter.export(it)
                 }
             }

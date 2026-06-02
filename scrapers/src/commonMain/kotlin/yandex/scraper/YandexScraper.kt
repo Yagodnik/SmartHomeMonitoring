@@ -3,8 +3,11 @@ package yandex.scraper
 import Scraper
 import kotlinx.serialization.json.Json
 import models.Metric
+import models.ResultOrError
+import models.ScrapeResult
 import yandex.internal.InternalYandexApi
 import yandex.models.YandexCapabilityType
+import yandex.models.YandexError
 import yandex.models.YandexPropertyType
 import yandex.models.YandexUserInfo
 import yandex.parsers.StateParser
@@ -32,17 +35,15 @@ class YandexScraper(
         YandexPropertyType.FLOAT to FloatPropertyParser(),
     )
 
-    override suspend fun scrape(): List<Metric> {
-        val result = api.queryUserInfo()
-
-//        if (result.isFailure) {
-//            println(result.exceptionOrNull()?.message)
-//        }
-
-        return result.fold(
-            onSuccess = { scrapeFromUserInfo(it) },
-            onFailure = { emptyList() }
-        )
+    override suspend fun scrape(): ScrapeResult {
+        return when (val result = api.queryUserInfo()) {
+            is ResultOrError.Success<YandexUserInfo> -> {
+                ScrapeResult.Success(scrapeFromUserInfo(result.data))
+            }
+            is ResultOrError.Error<YandexError> -> {
+                ScrapeResult.Error(result.error.errorDescription)
+            }
+        }
     }
 
     fun scrapeFromText(content: String): List<Metric> {

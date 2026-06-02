@@ -1,21 +1,10 @@
 package bus
 
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import models.MetricsSnapshot
 
-class MetricsBus(
-    bufferSize: Int = 1000
-) {
-    private val _events = MutableSharedFlow<MetricsSnapshot>(
-        replay = 0,
-        extraBufferCapacity = bufferSize,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
-    val events = _events.asSharedFlow()
+interface MetricsBus {
+    fun publish(snapshot: MetricsSnapshot)
 
-    fun publish(snapshot: MetricsSnapshot) {
-        _events.tryEmit(snapshot)
-    }
+    fun getEvents(): SharedFlow<MetricsSnapshot>
 }

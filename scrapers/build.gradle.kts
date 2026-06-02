@@ -16,9 +16,9 @@ kotlin {
     }
 
     jvm()
-    linuxArm64()
-    linuxX64()
-    mingwX64()
+//    linuxArm64()
+//    linuxX64()
+//    mingwX64()
     macosArm64()
     macosX64()
 
@@ -29,6 +29,8 @@ kotlin {
             api(libs.ktorClientContentNegotiation)
             api(libs.ktorClientAuth)
             api(libs.kotlinxSerializationJson)
+            implementation(libs.kotlinEnvVar)
+            implementation(libs.ksafe)
         }
 
         commonTest.dependencies {

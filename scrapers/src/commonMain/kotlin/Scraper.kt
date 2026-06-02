@@ -1,5 +1,5 @@
-import models.Metric
+import models.ScrapeResult
 
 interface Scraper {
-    suspend fun scrape(): List<Metric>
+    suspend fun scrape(): ScrapeResult
 }

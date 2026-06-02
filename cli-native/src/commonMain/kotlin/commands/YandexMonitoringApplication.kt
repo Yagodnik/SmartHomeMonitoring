@@ -1,6 +1,7 @@
 package commands
 
 import app.AppServices
+import bus.DefaultMetricsBus
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.context
 import com.github.ajalt.clikt.core.subcommands
@@ -43,7 +44,9 @@ class YandexMonitoringApplication(
 
     companion object {
         val registry = PrometheusRegistry()
+
         const val DEFAULT_PORT = 9091
+        val DEFAULT_POLLING_INTERVAL = 15.seconds
     }
 
     override fun run() {
@@ -55,7 +58,7 @@ class YandexMonitoringApplication(
         val configReader = YamlConfigReader(configContentSource)
 
         val exporterDefinitions = configReader.listExporters()
-        val pollingInterval = configReader.getPollingInterval()?.seconds ?: 15.seconds
+        val pollingInterval = configReader.getPollingInterval()?.seconds ?: DEFAULT_POLLING_INTERVAL
         val port = configReader.getServerPort() ?: DEFAULT_PORT
 
         val httpServer = HttpServer(
@@ -64,7 +67,7 @@ class YandexMonitoringApplication(
             DefaultPrometheusService()
         )
 
-        httpServer.start()
+//        httpServer.start()
 
         runBlocking {
             val monitoringService = DefaultMonitoringService(
@@ -72,6 +75,7 @@ class YandexMonitoringApplication(
                 exporterDefinitions,
                 pollingInterval,
                 appServices.scraper,
+                appServices.metricsBus,
             )
 
             val result = monitoringService.start()

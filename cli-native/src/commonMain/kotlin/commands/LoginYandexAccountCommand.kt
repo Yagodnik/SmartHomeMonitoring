@@ -35,9 +35,9 @@ class LoginYandexAccountCommand(
             terminal.println(TextStyles.bold("Enter this code at the text input on the website!"))
             terminal.println(TextColors.brightBlue("Trying to login..."))
 
-            val token = session.exchangeForToken()
+            val tokens = session.exchangeForToken()
 
-            if (token == null) {
+            if (tokens == null) {
                 terminal.println(TextColors.red("Failed to login"))
                 return@runBlocking
             }
@@ -45,6 +45,7 @@ class LoginYandexAccountCommand(
             terminal.println(TextColors.green("Successfully logged into the Yandex Account"))
 
             // Save token
+            accountService.saveOAuthToken(tokens)
         }
     }
 }

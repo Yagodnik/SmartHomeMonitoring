@@ -2,7 +2,11 @@ package app
 
 import Scraper
 import SmartHomeApi
+import bus.DefaultMetricsBus
+import bus.MetricsBus
 import dev.scottpierce.envvar.EnvVar
+import secrets.DefaultSecretsStorage
+import secrets.EnvSecretsStorage
 import services.AccountService
 import services.SmartHomeService
 import services.YandexAccountService
@@ -18,24 +22,32 @@ data class AppServices(
     private val internalApi: InternalYandexApi,
     val scraper: Scraper,
     val publicApi: SmartHomeApi,
+    val metricsBus: MetricsBus
 ) {
     companion object {
-        fun createYandexServices(token: String) : AppServices {
+        fun createYandexServices() : AppServices {
+//            val secretsStorage = DefaultSecretsStorage()
+            val secretsStorage = EnvSecretsStorage()
+
+            val clientId = EnvVar["YANDEX_CLIENT_ID"]
+            val clientSecret = EnvVar["YANDEX_CLIENT_SECRET"]
             val internalApi: InternalYandexApi = KtorInternalYandexApi(
-                token,
-                EnvVar["YANDEX_CLIENT_ID"],
-                EnvVar["YANDEX_CLIENT_SECRET"])
+                secretsStorage,
+                clientId, clientSecret)
+
             val scraper = YandexScraper(internalApi)
             val publicApi = YandexSmartHomeApi(internalApi)
             val smartHomeService = YandexSmartHomeService(publicApi)
-            val accountService = YandexAccountService(internalApi)
+            val accountService = YandexAccountService(internalApi, secretsStorage)
+            val metricsBus = DefaultMetricsBus()
 
             return AppServices(
                 smartHomeService,
                 accountService,
                 internalApi,
                 scraper,
-                publicApi
+                publicApi,
+                metricsBus
             )
         }
     }
