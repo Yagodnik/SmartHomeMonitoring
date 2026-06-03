@@ -4,6 +4,7 @@ import Scraper
 import SmartHomeApi
 import bus.DefaultMetricsBus
 import bus.MetricsBus
+import com.github.ajalt.mordant.platform.MultiplatformSystem.exitProcess
 import dev.scottpierce.envvar.EnvVar
 import secrets.DefaultSecretsStorage
 import secrets.EnvSecretsStorage
@@ -30,10 +31,12 @@ data class AppServices(
             val secretsStorage = EnvSecretsStorage()
 
             val clientId = EnvVar["YANDEX_CLIENT_ID"]
-            val clientSecret = EnvVar["YANDEX_CLIENT_SECRET"]
-            val internalApi: InternalYandexApi = KtorInternalYandexApi(
-                secretsStorage,
-                clientId, clientSecret)
+            if (clientId == null) {
+                println("No client ID provided!")
+                exitProcess(1)
+            }
+
+            val internalApi: InternalYandexApi = KtorInternalYandexApi(secretsStorage, clientId ?: "")
 
             val scraper = YandexScraper(internalApi)
             val publicApi = YandexSmartHomeApi(internalApi)

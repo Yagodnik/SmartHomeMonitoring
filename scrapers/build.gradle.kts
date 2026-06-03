@@ -31,6 +31,8 @@ kotlin {
             api(libs.kotlinxSerializationJson)
             implementation(libs.kotlinEnvVar)
             implementation(libs.ksafe)
+            implementation(libs.kotlinCryptoSha2)
+            implementation(libs.kotlinCryptoSecureRandom)
         }
 
         commonTest.dependencies {

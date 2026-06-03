@@ -11,6 +11,8 @@ clikt = "5.0.0"
 mordant = "3.0.0"
 qrcodeKotlin = "0.3.0"
 ksafe = "2.1.0"
+kotlinCryptoSha2 = "0.6.0"
+kotlinCryptoSecureRandom = "0.3.0"
 
 [libraries]
 clikt = { module = "com.github.ajalt.clikt:clikt", version.ref = "clikt" }
@@ -38,6 +40,8 @@ yamlkt = { module = "net.mamoe.yamlkt:yamlkt", version.ref = "yamlkt" }
 qrcodeKotlin = { module = "io.github.goquati:qr", version.ref = "qrcodeKotlin" }
 
 ksafe = { module = "eu.anifantakis:ksafe", version.ref = "ksafe" }
+kotlinCryptoSha2 = { module = "org.kotlincrypto.hash:sha2", version.ref = "kotlinCryptoSha2" }
+kotlinCryptoSecureRandom = { module = "org.kotlincrypto:secure-random", version.ref = "kotlinCryptoSecureRandom" }
 
 kotlinTest = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 

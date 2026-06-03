@@ -8,7 +8,7 @@ object QrCodeAscii {
     const val NEW_LINE = "\n"
 
     fun encodeAsQrCode(string: String): String {
-        val qrCode = QrCode.encodeText(string, QrCode.Ecc.HIGH)
+        val qrCode = QrCode.encodeText(string, QrCode.Ecc.LOW)
         val sb = StringBuilder()
 
         for (y in 0 until qrCode.size) {

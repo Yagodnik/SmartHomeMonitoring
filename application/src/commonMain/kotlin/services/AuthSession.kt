@@ -1,10 +1,9 @@
 package services
 
-import models.AuthData
 import models.OAuth2Token
 
 interface AuthSession {
-    suspend fun requestUserCode(): AuthData?
+    suspend fun requestAuthUrl(): String?
 
-    suspend fun exchangeForToken(): OAuth2Token?
+    suspend fun exchangeForToken(userCode: String): OAuth2Token?
 }

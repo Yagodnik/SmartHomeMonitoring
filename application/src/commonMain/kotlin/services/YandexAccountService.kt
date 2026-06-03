@@ -7,6 +7,7 @@ import models.OAuth2Token
 import models.ResultOrError
 import yandex.internal.InternalYandexApi
 import yandex.models.YandexAccountInfo
+import yandex.models.YandexAuthData
 import yandex.models.YandexDeviceCodeBody
 import yandex.models.YandexError
 
@@ -17,31 +18,23 @@ class YandexAccountService(
     class YandexAuthSession(
         private val internalApi: InternalYandexApi
     ) : AuthSession {
-        private var dto: ResultOrError<YandexDeviceCodeBody, YandexError>? = null
+        private var dto: YandexAuthData? = null
 
-        override suspend fun requestUserCode(): AuthData? {
-            dto = internalApi.requestCode()
+        override suspend fun requestAuthUrl(): String? {
+            dto = internalApi.generateAuthUrl()
 
-            return dto?.let {
-                when (it) {
-                    is ResultOrError.Success<YandexDeviceCodeBody> -> {
-                        AuthData(it.data.userCode, it.data.verificationUrl)
-                    }
-                    is ResultOrError.Error<YandexError> -> null
-                }
-            }
+            return dto?.url
         }
 
-        override suspend fun exchangeForToken(): OAuth2Token? {
+        override suspend fun exchangeForToken(userCode: String): OAuth2Token? {
             return dto?.let {
-                if (it is ResultOrError.Success<YandexDeviceCodeBody>) {
-                    when (val result = internalApi.exchangeForOAuthToken(it.data)) {
-                        is ResultOrError.Success<OAuth2Token> -> result.data
-                        is ResultOrError.Error<YandexError> -> null
+                when (val result = internalApi.exchangeForOAuthToken(userCode, it)) {
+                    is ResultOrError.Success<OAuth2Token> -> result.data
+                    is ResultOrError.Error<YandexError> -> {
+                        println("Error: ${result.error.error} ${result.error.errorDescription}")
+                        null
                     }
                 }
-
-                null
             }
         }
     }
@@ -52,7 +45,7 @@ class YandexAccountService(
                 Account(result.data.displayName, result.data.defaultEmail)
             }
             is ResultOrError.Error<YandexError> -> {
-                Account("", "")
+                Account(result.error.error, result.error.errorDescription)
             }
         }
     }

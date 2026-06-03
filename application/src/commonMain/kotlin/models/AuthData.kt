@@ -1,6 +1,6 @@
 package models
 
 data class AuthData(
-    val userCode: String,
+    val challengeCode: String,
     val verificationUrl: String,
 )

@@ -2,15 +2,15 @@ package yandex.internal
 
 import models.OAuth2Token
 import models.ResultOrError
-import yandex.models.YandexAccountInfo
-import yandex.models.YandexDeviceCodeBody
-import yandex.models.YandexError
-import yandex.models.YandexUserInfo
+import yandex.models.*
 
 interface InternalYandexApi {
-    suspend fun requestCode(): ResultOrError<YandexDeviceCodeBody, YandexError>
+    suspend fun generateAuthUrl(): YandexAuthData
 
-    suspend fun exchangeForOAuthToken(deviceCodeDto: YandexDeviceCodeBody): ResultOrError<OAuth2Token, YandexError>
+    suspend fun exchangeForOAuthToken(
+        code: String,
+        dto: YandexAuthData
+    ): ResultOrError<OAuth2Token, YandexError>
 
     suspend fun queryUserInfo() : ResultOrError<YandexUserInfo, YandexError>
 

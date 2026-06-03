@@ -3,30 +3,25 @@ package yandex.internal
 import SecretsStorage
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.plugins.auth.Auth
-import io.ktor.client.plugins.auth.providers.BearerTokens
-import io.ktor.client.plugins.auth.providers.bearer
+import io.ktor.client.plugins.auth.*
+import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
-import kotlinx.coroutines.delay
 import kotlinx.serialization.json.Json
 import models.OAuth2Token
 import models.ResultOrError
-import yandex.models.YandexAccountInfo
-import yandex.models.YandexDeviceCodeBody
-import yandex.models.YandexError
-import yandex.models.YandexTokenBody
-import yandex.models.YandexUserInfo
+import org.kotlincrypto.SecureRandom
+import org.kotlincrypto.hash.sha2.SHA256
+import yandex.models.*
 import yandex.utils.asYandexError
-import kotlin.time.Duration.Companion.seconds
+import kotlin.io.encoding.Base64
 
 class KtorInternalYandexApi(
     private val secretsStorage: SecretsStorage,
-    private val clientId: String? = null,
-    private val clientSecret: String? = null,
+    private val clientId: String,
     private val client: HttpClient = HttpClient {
         install(ContentNegotiation) {
             json(Json {
@@ -39,6 +34,8 @@ class KtorInternalYandexApi(
                 loadTokens {
                     val accessToken = secretsStorage.getSecret("YANDEX_ACCESS_TOKEN")?.takeIf { it.isNotBlank() }
                     val refreshToken = secretsStorage.getSecret("YANDEX_REFRESH_TOKEN")?.takeIf { it.isNotBlank() }
+
+                    println("Access token: $accessToken")
 
                     if (accessToken != null) {
                         BearerTokens(accessToken, refreshToken ?: "")
@@ -53,8 +50,7 @@ class KtorInternalYandexApi(
 
                         setBody(FormDataContent(Parameters.build {
                             append("grant_type", "refresh_token")
-                            append("client_id", clientId ?: "")
-                            append("client_secret", clientSecret ?: "")
+                            append("client_id", clientId)
                             append("refresh_token", oldTokens?.refreshToken ?: "")
                         }))
                     }
@@ -89,58 +85,73 @@ class KtorInternalYandexApi(
         private const val AUTH_BASE_URL = "https://oauth.yandex.ru"
         private const val BASE_URL = "https://api.iot.yandex.net/v1.0"
         private const val ACCOUNT_BASE_URL = "https://login.yandex.ru/info"
+        private const val OAUTH_AUTHORIZE_URL = "https://oauth.yandex.ru/authorize"
+        private const val REDIRECT_URL = "https://oauth.yandex.ru/verification_code"
+        private const val CODE_CHALLENGE_METHOD = "S256"
 
         private const val USER_INFO = "/user/info"
         private const val REQUEST_CODE = "/device/code"
         private const val EXCHANGE_FOR_TOKEN = "/token"
 
         private const val AUTH_SCOPE = "iot:view"
-        private const val GRANT_TYPE = "device_code"
+        private const val GRANT_TYPE = "authorization_code"
     }
 
-    override suspend fun requestCode(): ResultOrError<YandexDeviceCodeBody, YandexError> {
-        val response = client.post("$AUTH_BASE_URL$REQUEST_CODE") {
+    private fun generatePkce(): Pair<String, String> {
+        val bytes = ByteArray(32)
+        SecureRandom().nextBytesCopyTo(bytes)
+
+        val encoder = Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT)
+        val verifier = encoder.encode(bytes)
+
+        val verifierBytes = verifier.encodeToByteArray()
+        val hash = SHA256().digest(verifierBytes)
+
+        val challenge = encoder.encode(hash)
+
+        return Pair(verifier, challenge)
+    }
+
+    override suspend fun generateAuthUrl(): YandexAuthData {
+        val (verifier, challenge) = generatePkce()
+
+        val url = URLBuilder(OAUTH_AUTHORIZE_URL).apply {
+            parameters.append("response_type", "code")
+            parameters.append("client_id", clientId)
+            parameters.append("code_challenge", challenge)
+            parameters.append("code_challenge_method", CODE_CHALLENGE_METHOD)
+        }.buildString()
+
+        return YandexAuthData(url, verifier, challenge)
+    }
+
+    override suspend fun exchangeForOAuthToken(code: String, dto: YandexAuthData)
+        : ResultOrError<OAuth2Token, YandexError>
+    {
+        val response = client.post("$AUTH_BASE_URL$EXCHANGE_FOR_TOKEN") {
             headers.remove(HttpHeaders.Authorization)
 
             contentType(ContentType.Application.FormUrlEncoded)
 
             setBody(FormDataContent(Parameters.build {
-                append("client_id", clientId ?: "")
-                append("scope", AUTH_SCOPE)
+                append("grant_type", GRANT_TYPE)
+                append("code", code)
+                append("client_id", clientId)
+                append("code_verifier", dto.verifier)
+                append("redirect_uri", REDIRECT_URL)
             }))
         }
 
         return when (response.status) {
-            HttpStatusCode.OK -> ResultOrError.Success(response.body<YandexDeviceCodeBody>())
+            HttpStatusCode.OK -> {
+                val body = response.body<YandexTokenBody>()
+                val tokens = OAuth2Token(body.accessToken, body.refreshToken)
+                ResultOrError.Success(tokens)
+            }
             else -> runCatching { response.body<YandexError>() }
                 .map { ResultOrError.Error(it) }
                 .getOrElse { ResultOrError.Error(response.asYandexError()) }
         }
-    }
-
-    override suspend fun exchangeForOAuthToken(deviceCodeDto: YandexDeviceCodeBody)
-        : ResultOrError<OAuth2Token, YandexError>
-    {
-        val requestsCount = deviceCodeDto.expiresIn / deviceCodeDto.interval
-        val interval = deviceCodeDto.interval
-
-        (1..requestsCount).forEach { _ ->
-            when (val result = exchangeForToken(deviceCodeDto.deviceCode)) {
-                is ResultOrError.Success -> {
-                    val token = OAuth2Token(result.data.accessToken, result.data.refreshToken)
-                    return ResultOrError.Success(token)
-                }
-                else -> {}
-            }
-
-            delay(interval.seconds)
-        }
-
-        val error = YandexError(
-            "Whole time interval $interval exceeded without successful authorization",
-            "Timeout exceeded"
-        )
-        return ResultOrError.Error(error)
     }
 
     override suspend fun queryUserInfo() : ResultOrError<YandexUserInfo, YandexError> {
@@ -159,28 +170,6 @@ class KtorInternalYandexApi(
 
         return when (response.status) {
             HttpStatusCode.OK -> ResultOrError.Success(response.body<YandexAccountInfo>())
-            else -> runCatching { response.body<YandexError>() }
-                .map { ResultOrError.Error(it) }
-                .getOrElse { ResultOrError.Error(response.asYandexError()) }
-        }
-    }
-
-    private suspend fun exchangeForToken(code: String) : ResultOrError<YandexTokenBody, YandexError> {
-        val response = client.post("$AUTH_BASE_URL$EXCHANGE_FOR_TOKEN") {
-            headers.remove(HttpHeaders.Authorization)
-
-            contentType(ContentType.Application.FormUrlEncoded)
-
-            setBody(FormDataContent(Parameters.build {
-                append("grant_type", GRANT_TYPE)
-                append("code", code)
-                append("client_id", clientId ?: "")
-                append("client_secret", clientSecret ?: "")
-            }))
-        }
-
-        return when (response.status) {
-            HttpStatusCode.OK -> ResultOrError.Success(response.body<YandexTokenBody>())
             else -> runCatching { response.body<YandexError>() }
                 .map { ResultOrError.Error(it) }
                 .getOrElse { ResultOrError.Error(response.asYandexError()) }
