@@ -13,11 +13,9 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import models.OAuth2Token
 import models.ResultOrError
-import org.kotlincrypto.SecureRandom
-import org.kotlincrypto.hash.sha2.SHA256
 import yandex.models.*
 import yandex.utils.asYandexError
-import kotlin.io.encoding.Base64
+import yandex.utils.generatePkce
 
 class KtorInternalYandexApi(
     private val secretsStorage: SecretsStorage,
@@ -90,26 +88,8 @@ class KtorInternalYandexApi(
         private const val CODE_CHALLENGE_METHOD = "S256"
 
         private const val USER_INFO = "/user/info"
-        private const val REQUEST_CODE = "/device/code"
         private const val EXCHANGE_FOR_TOKEN = "/token"
-
-        private const val AUTH_SCOPE = "iot:view"
         private const val GRANT_TYPE = "authorization_code"
-    }
-
-    private fun generatePkce(): Pair<String, String> {
-        val bytes = ByteArray(32)
-        SecureRandom().nextBytesCopyTo(bytes)
-
-        val encoder = Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT)
-        val verifier = encoder.encode(bytes)
-
-        val verifierBytes = verifier.encodeToByteArray()
-        val hash = SHA256().digest(verifierBytes)
-
-        val challenge = encoder.encode(hash)
-
-        return Pair(verifier, challenge)
     }
 
     override suspend fun generateAuthUrl(): YandexAuthData {
