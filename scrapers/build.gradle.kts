@@ -28,6 +28,7 @@ kotlin {
             api(libs.ktorSerializationJson)
             api(libs.ktorClientContentNegotiation)
             api(libs.ktorClientAuth)
+            api(libs.ktorClientLogging)
             api(libs.kotlinxSerializationJson)
             implementation(libs.kotlinEnvVar)
             implementation(libs.ksafe)

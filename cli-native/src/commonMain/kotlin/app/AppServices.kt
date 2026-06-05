@@ -1,14 +1,9 @@
 package app
 
 import Scraper
-import SecretsStorage
 import SmartHomeApi
 import bus.DefaultMetricsBus
 import bus.MetricsBus
-import com.github.ajalt.mordant.platform.MultiplatformSystem.exitProcess
-import dev.scottpierce.envvar.EnvVar
-import kotlinx.io.files.Path
-import secrets.EnvSecretsStorage
 import secrets.FileSecretsStorage
 import services.AccountService
 import services.SmartHomeService
@@ -28,21 +23,14 @@ data class AppServices(
     val metricsBus: MetricsBus
 ) {
     companion object {
-        fun createYandexServices() : AppServices {
+        fun createYandexServices(configuration: Configuration) : AppServices {
 //            val secretsStorage = DefaultSecretsStorage()
 //            val secretsStorage = EnvSecretsStorage()
+
             val secretsStorage = FileSecretsStorage(
-                EnvVar["CREDENTIALS_DIR"] ?: "/",
-                EnvVar["MASTER_KEY"] ?: "")
-
-            val clientId = EnvVar["YANDEX_CLIENT_ID"]
-            if (clientId == null) {
-                println("No client ID provided!")
-                exitProcess(1)
-            }
-
-            val internalApi: InternalYandexApi = KtorInternalYandexApi(secretsStorage, clientId ?: "")
-
+                configuration.credentialsDir,
+                configuration.masterKey)
+            val internalApi: InternalYandexApi = KtorInternalYandexApi(secretsStorage, configuration.yandexClientId)
             val scraper = YandexScraper(internalApi)
             val publicApi = YandexSmartHomeApi(internalApi)
             val smartHomeService = YandexSmartHomeService(publicApi)

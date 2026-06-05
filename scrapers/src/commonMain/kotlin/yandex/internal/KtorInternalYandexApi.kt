@@ -6,10 +6,13 @@ import io.ktor.client.call.*
 import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import io.ktor.util.logging.Logger
 import kotlinx.serialization.json.Json
 import models.OAuth2Token
 import models.ResultOrError
@@ -26,6 +29,8 @@ class KtorInternalYandexApi(
                 ignoreUnknownKeys = true
             })
         }
+
+        install(Logging) { level = LogLevel.NONE }
 
         install(Auth) {
             bearer {

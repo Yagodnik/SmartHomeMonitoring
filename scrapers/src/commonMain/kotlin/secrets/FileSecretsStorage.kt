@@ -13,11 +13,11 @@ import org.kotlincrypto.SecureRandom
 import org.kotlincrypto.hash.sha2.SHA256
 
 class FileSecretsStorage(
-    private val configDirectory: String,
+    credentialsDir: String,
     private val masterKey: String
 ) : SecretsStorage {
-    private var configDirectoryPath = Path(configDirectory)
-    private val filePath = Path(configDirectory, "secrets.json.enc")
+    private var configDirectoryPath = Path(credentialsDir)
+    private val filePath = Path(credentialsDir, "secrets.json.enc")
     private val json = Json { ignoreUnknownKeys = true }
 
     private val cryptoProvider = CryptographyProvider.Default

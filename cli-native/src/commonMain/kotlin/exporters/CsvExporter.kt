@@ -60,6 +60,7 @@ class CsvExporter(
             "deviceName" to metric.deviceName,
             "value" to metric.value.numericValue.toString(),
             "rawValue" to metric.value.rawValue,
+            "metric" to metric.value.name
         )
 
     private fun writeString(timestamp: Instant, formattedLine: String) {
