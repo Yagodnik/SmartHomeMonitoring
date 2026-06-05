@@ -38,9 +38,6 @@ class KtorInternalYandexApi(
                     val accessToken = secretsStorage.getSecret("YANDEX_ACCESS_TOKEN")?.takeIf { it.isNotBlank() }
                     val refreshToken = secretsStorage.getSecret("YANDEX_REFRESH_TOKEN")?.takeIf { it.isNotBlank() }
 
-                    println("Access token: $accessToken")
-                    println("Access token: $refreshToken")
-
                     if (accessToken != null) {
                         BearerTokens(accessToken, refreshToken ?: "")
                     } else {

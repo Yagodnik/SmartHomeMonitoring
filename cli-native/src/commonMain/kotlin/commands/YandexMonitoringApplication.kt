@@ -27,7 +27,7 @@ import services.DefaultMonitoringService
 import services.DefaultPrometheusService
 import kotlin.time.Duration.Companion.seconds
 
-class YandexMonitoringApplication(t: Terminal) : CliktCommand("smart-home-monitoring") {
+class YandexMonitoringApplication(private val t: Terminal) : CliktCommand("smart-home-monitoring") {
     companion object {
         val registry = PrometheusRegistry()
 
@@ -55,7 +55,7 @@ class YandexMonitoringApplication(t: Terminal) : CliktCommand("smart-home-monito
         createServices()?.let {
             appServices = it
         } ?: run {
-            terminal.println(TextColors.red("Failed to initialize app services"))
+            t.println(TextColors.red("Failed to initialize app services"))
             exitProcess(FAILURE_CODE)
         }
 
@@ -75,29 +75,29 @@ class YandexMonitoringApplication(t: Terminal) : CliktCommand("smart-home-monito
         val clientId = EnvVar[YANDEX_CLIENT_ID_PARAM_NAME]
 
         if (credentialsDir == null) {
-            terminal.warning("" +
+            t.warning("" +
                     "No credentials directory specified. Fallback to default")
         } else {
-            terminal.println(TextColors.green("" +
+            t.println(TextColors.green("" +
                     "Using $credentialsDir as credentials directory"))
         }
 
         if (masterKey == null) {
-            terminal.println(TextColors.red("" +
+            t.println(TextColors.red("" +
                     "Provide a master key via $MASTER_KEY_PARAM_NAME env variable"))
             return null
         } else {
-            terminal.println(TextColors.green("" +
+            t.println(TextColors.green("" +
                     "Found a master key"))
         }
 
         if (clientId == null) {
-            terminal.println(TextColors.red("" +
+            t.println(TextColors.red("" +
                     "Client ID for yandex was not provided. " +
                     "Specify it via $YANDEX_CLIENT_ID_PARAM_NAME env variable"))
             return null
         } else {
-            terminal.println(TextColors.green("" +
+            t.println(TextColors.green("" +
                     "Yandex Client ID is provided"))
         }
 
@@ -106,7 +106,7 @@ class YandexMonitoringApplication(t: Terminal) : CliktCommand("smart-home-monito
             masterKey,
             clientId)
 
-        terminal.println(TextColors.green("" +
+        t.println(TextColors.green("" +
                 "App services are ready"))
 
         return createYandexServices(configuration)
