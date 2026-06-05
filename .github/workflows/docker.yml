@@ -20,16 +20,22 @@ jobs:
 
       - name: Build & push
         run: |
+          REPO_LOWER="${{ github.repository }}"
+          REPO_LOWER="${REPO_LOWER,,}"
+          
           docker build \
             --build-arg YANDEX_CLIENT_ID=${{ secrets.YANDEX_CLIENT_ID }} \
-            -t ghcr.io/${{ github.repository }}:${{ github.sha }} \
+            -t ghcr.io/${REPO_LOWER}:${{ github.sha }} \
             -f ./docker/Dockerfile.jvm \
             .
-          docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
+          docker push ghcr.io/${REPO_LOWER}:${{ github.sha }}
 
       - name: Tag latest
         if: github.ref == 'refs/heads/main'
         run: |
-          docker tag ghcr.io/${{ github.repository }}:${{ github.sha }} \
-            ghcr.io/${{ github.repository }}:latest
-          docker push ghcr.io/${{ github.repository }}:latest
+          REPO_LOWER="${{ github.repository }}"
+          REPO_LOWER="${REPO_LOWER,,}"
+          
+          docker tag ghcr.io/${REPO_LOWER}:${{ github.sha }} \
+            ghcr.io/${REPO_LOWER}:latest
+          docker push ghcr.io/${REPO_LOWER}:latest
