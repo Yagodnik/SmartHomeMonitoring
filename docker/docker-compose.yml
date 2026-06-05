@@ -1,0 +1,33 @@
+services:
+  grafana:
+    image: grafana/grafana:12.4
+    ports:
+      - "${GRAFANA_PORT}:3000"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    environment:
+      GF_SECURITY_ADMIN_USER: "${GRAFANA_USER}"
+      GF_SECURITY_ADMIN_PASSWORD: "${GRAFANA_PASSWORD}"
+    depends_on:
+      - prometheus
+
+  prometheus:
+    image: prom/prometheus:v3.10.0
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  monitoring-app:
+    image: smart-home-monitoring-jvm:latest
+    ports:
+      - "9091:9091"
+    environment:
+      ACCESS_TOKEN: "${ACCESS_TOKEN}"
+      YANDEX_CLIENT_ID: "${YANDEX_CLIENT_ID}"
+      CREDENTIALS_DIR: "/credentials"
+      MASTER_KEY: "1"
+    volumes:
+      - ./credentials:/credentials
+      - ./config.yaml:/config.yaml
+      - ./logs:/logs
+    command: ["-c", "/config.yaml"]

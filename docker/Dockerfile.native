@@ -1,0 +1,41 @@
+# syntax=docker/dockerfile:1.4
+FROM --platform=linux/amd64 gradle:8.7-jdk21 AS builder
+
+ARG TARGETARCH
+WORKDIR /app
+COPY . .
+
+RUN apt-get update && apt-get install -y \
+    gcc-aarch64-linux-gnu \
+    g++-aarch64-linux-gnu \
+    binutils-aarch64-linux-gnu \
+    libc6-dev-arm64-cross \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN <<EOF
+set -e
+if [ "$TARGETARCH" = "amd64" ]; then
+  echo "🎯 Building linuxX64 (native to builder)"
+
+  ./gradlew :cli-native:linkReleaseExecutableLinuxX64 --no-daemon --console=plain
+  cp cli-native/build/bin/linuxX64/releaseExecutable/*.kexe /app/app
+else
+  echo "🎯 Building linuxArm64 (cross-compile from x86_64)"
+
+  export CC_aarch64_unknown_linux_gnu=aarch64-linux-gnu-gcc
+  export CXX_aarch64_unknown_linux_gnu=aarch64-linux-gnu-g++
+  export AR_aarch64_unknown_linux_gnu=aarch64-linux-gnu-ar
+
+#  ./gradlew :cli-native:linkReleaseExecutableLinuxArm64 --no-daemon --console=plain
+  ./gradlew :cli-native:linkDebugExecutableLinuxArm64 --no-daemon --console=plain
+#  cp cli-native/build/bin/linuxArm64/releaseExecutable/*.kexe /app/app
+  cp cli-native/build/bin/linuxArm64/debugExecutable/*.kexe /app/app
+fi
+EOF
+
+FROM gcr.io/distroless/cc-debian12
+WORKDIR /app
+COPY --from=builder --chown=nonroot:nonroot /app/app /app/app
+RUN chmod +x /app/app
+USER nonroot
+ENTRYPOINT ["/app/app"]

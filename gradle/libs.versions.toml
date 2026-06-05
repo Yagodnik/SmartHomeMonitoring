@@ -1,12 +1,59 @@
 [versions]
-kotlin = "2.0.0"
+kotlin = "2.3.0"
 kotlinxSerialization = "1.7.3"
-kotlinxCli = "0.3.6"
+ktor = "3.0.0"
+yamlkt = "0.13.0"
+kotlinxIoCore = "0.5.4"
+kotlinEnvVar = "1.0.4"
+kotlinxDatetime = "0.6.1"
+kotlinxCoroutines = "1.9.0"
+clikt = "5.0.0"
+mordant = "3.0.0"
+qrcodeKotlin = "0.3.0"
+ksafe = "2.1.0"
+kotlinCryptoSha2 = "0.6.0"
+kotlinCryptoSecureRandom = "0.3.0"
+cryptography = "0.6.0"
+slf4jNop = "2.0.16"
 
 [libraries]
+clikt = { module = "com.github.ajalt.clikt:clikt", version.ref = "clikt" }
+mordant = { module = "com.github.ajalt.mordant:mordant", version.ref = "mordant" }
+
 kotlinxSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
-kotlinxCli = { module = "org.jetbrains.kotlinx:kotlinx-cli", version.ref = "kotlinxCli" }
+kotlinxIoCore = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinxIoCore" }
+kotlinEnvVar = { module = "dev.scottpierce:kotlin-env-var", version.ref = "kotlinEnvVar" }
+kotlinxDatetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+kotlinxCoroutinesCore = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+
+ktorClientCore = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktorClientCio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktorClientCurl = { module = "io.ktor:ktor-client-curl", version.ref = "ktor" }
+ktorClientWinhttp = { module = "io.ktor:ktor-client-winhttp", version.ref = "ktor" }
+ktorClientDarwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktorClientContentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktorClientMock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
+ktorClientAuth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
+ktorClientLogging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+ktorSerializationJson = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktorServerCore = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
+ktorServerCio  = { module = "io.ktor:ktor-server-cio", version.ref = "ktor" }
+slf4jNop = { module = "org.slf4j:slf4j-nop", version.ref = "slf4jNop" }
+
+yamlkt = { module = "net.mamoe.yamlkt:yamlkt", version.ref = "yamlkt" }
+qrcodeKotlin = { module = "io.github.goquati:qr", version.ref = "qrcodeKotlin" }
+
+ksafe = { module = "eu.anifantakis:ksafe", version.ref = "ksafe" }
+kotlinCryptoSha2 = { module = "org.kotlincrypto.hash:sha2", version.ref = "kotlinCryptoSha2" }
+kotlinCryptoSecureRandom = { module = "org.kotlincrypto:secure-random", version.ref = "kotlinCryptoSecureRandom" }
+cryptographyCore = { module = "dev.whyoleg.cryptography:cryptography-core", version.ref = "cryptography" }
+cryptographyProviderJdk = { module = "dev.whyoleg.cryptography:cryptography-provider-jdk", version.ref = "cryptography" }
+cryptographyProviderCryptokit = { module = "dev.whyoleg.cryptography:cryptography-provider-cryptokit", version.ref = "cryptography" }
+
+
+kotlinTest = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 
 [plugins]
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
