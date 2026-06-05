@@ -38,7 +38,7 @@ class YandexMonitoringApplication(
             ListDevicesCommand(appServices.smartHomeService),
             PrintYandexAccountInfoCommand(appServices.accountService),
             LoginYandexAccountCommand(appServices.accountService),
-            LogoutYandexAccountCommand(),
+            LogoutYandexAccountCommand(appServices.accountService),
         )
     }
 
@@ -67,7 +67,7 @@ class YandexMonitoringApplication(
             DefaultPrometheusService()
         )
 
-//        httpServer.start()
+        httpServer.start()
 
         runBlocking {
             val monitoringService = DefaultMonitoringService(

@@ -47,11 +47,9 @@ object QrCodeAscii {
                 }
             }
 
-            // Add right margin and newline
             sb.append(" ".repeat(margin)).append(NEW_LINE)
         }
 
-        // 3. Add bottom margin
         repeat(margin) {
             sb.append(" ".repeat(size + margin * 2)).append(NEW_LINE)
         }

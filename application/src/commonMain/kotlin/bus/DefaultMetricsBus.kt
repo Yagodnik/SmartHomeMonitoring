@@ -14,7 +14,7 @@ class DefaultMetricsBus(
         extraBufferCapacity = bufferSize,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
-    val events = _events.asSharedFlow()
+//    val events = _events.asSharedFlow()
 
     override fun publish(snapshot: MetricsSnapshot) {
         _events.tryEmit(snapshot)

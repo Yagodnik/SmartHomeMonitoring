@@ -1,13 +1,15 @@
 package app
 
 import Scraper
+import SecretsStorage
 import SmartHomeApi
 import bus.DefaultMetricsBus
 import bus.MetricsBus
 import com.github.ajalt.mordant.platform.MultiplatformSystem.exitProcess
 import dev.scottpierce.envvar.EnvVar
-import secrets.DefaultSecretsStorage
+import kotlinx.io.files.Path
 import secrets.EnvSecretsStorage
+import secrets.FileSecretsStorage
 import services.AccountService
 import services.SmartHomeService
 import services.YandexAccountService
@@ -28,7 +30,10 @@ data class AppServices(
     companion object {
         fun createYandexServices() : AppServices {
 //            val secretsStorage = DefaultSecretsStorage()
-            val secretsStorage = EnvSecretsStorage()
+//            val secretsStorage = EnvSecretsStorage()
+            val secretsStorage = FileSecretsStorage(
+                EnvVar["CREDENTIALS_DIR"] ?: "/",
+                EnvVar["MASTER_KEY"] ?: "")
 
             val clientId = EnvVar["YANDEX_CLIENT_ID"]
             if (clientId == null) {

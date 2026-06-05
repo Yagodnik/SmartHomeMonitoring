@@ -11,6 +11,10 @@ import utils.QrCodeAscii.encodeAsQrCode
 class LoginYandexAccountCommand(
     private val accountService: AccountService,
 ) : CliktCommand("login-yandex") {
+    companion object {
+        const val AUTH_ATTEMPTS_LIMIT = 3
+    }
+
     override fun run() {
         runBlocking {
             val session = accountService.createAuthSession()
@@ -31,22 +35,29 @@ class LoginYandexAccountCommand(
                     TextStyles.italic(TextColors.brightBlue("qr code")) +
                     " above")
 
-            terminal.print("Enter code: ")
-            val secretCode = terminal.readLineOrNull(false)
-            secretCode?.let {
-                terminal.println("Received: $it")
+            for (i in 1..AUTH_ATTEMPTS_LIMIT) {
+                terminal.print("Enter code: ")
+                val secretCode = terminal.readLineOrNull(false)
+                secretCode?.let {
+                    terminal.println("Received: $it")
+                }
+
+                val tokens = session.exchangeForToken(secretCode ?: "")
+
+                if (tokens == null) {
+                    terminal.println(TextColors.red("" +
+                            "Failed to login. Try again. " +
+                            "You have ${AUTH_ATTEMPTS_LIMIT - i} attempts"))
+                } else {
+                    terminal.println(TextColors.green("" +
+                            "Successfully logged into the Yandex Account"))
+
+                    accountService.saveOAuthToken(tokens)
+                    return@runBlocking
+                }
             }
 
-            val tokens = session.exchangeForToken(secretCode ?: "")
-
-            if (tokens == null) {
-                terminal.println(TextColors.red("Failed to login"))
-                return@runBlocking
-            }
-
-            terminal.println(TextColors.green("Successfully logged into the Yandex Account"))
-
-            accountService.saveOAuthToken(tokens)
+            terminal.println(TextColors.red("Failed to login"))
         }
     }
 }

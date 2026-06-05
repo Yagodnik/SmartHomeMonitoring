@@ -9,4 +9,6 @@ interface AccountService {
     fun createAuthSession() : AuthSession
 
     fun saveOAuthToken(tokens: OAuth2Token)
+
+    fun deleteAuthData()
 }

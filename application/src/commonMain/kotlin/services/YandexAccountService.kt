@@ -56,4 +56,9 @@ class YandexAccountService(
         secretsStorage.saveSecret("YANDEX_ACCESS_TOKEN", tokens.accessToken)
         secretsStorage.saveSecret("YANDEX_REFRESH_TOKEN", tokens.refreshToken)
     }
+
+    override fun deleteAuthData() {
+        secretsStorage.saveSecret("YANDEX_ACCESS_TOKEN", "")
+        secretsStorage.saveSecret("YANDEX_REFRESH_TOKEN", "")
+    }
 }

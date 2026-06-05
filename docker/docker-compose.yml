@@ -23,9 +23,10 @@ services:
       - "9091:9091"
     environment:
       ACCESS_TOKEN: "${ACCESS_TOKEN}"
+      YANDEX_CLIENT_ID: "${YANDEX_CLIENT_ID}"
+      CREDENTIALS_DIR: "/credentials"
+      MASTER_KEY: "1"
     volumes:
+      - ./credentials:/credentials
       - ./config.yaml:/config.yaml
     command: ["-c", "/config.yaml"]
-    depends_on:
-      - prometheus
-      - grafana

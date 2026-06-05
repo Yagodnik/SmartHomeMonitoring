@@ -20,7 +20,7 @@ import yandex.utils.generatePkce
 class KtorInternalYandexApi(
     private val secretsStorage: SecretsStorage,
     private val clientId: String,
-    private val client: HttpClient = HttpClient {
+    private val httpClient: HttpClient = HttpClient {
         install(ContentNegotiation) {
             json(Json {
                 ignoreUnknownKeys = true
@@ -34,6 +34,7 @@ class KtorInternalYandexApi(
                     val refreshToken = secretsStorage.getSecret("YANDEX_REFRESH_TOKEN")?.takeIf { it.isNotBlank() }
 
                     println("Access token: $accessToken")
+                    println("Access token: $refreshToken")
 
                     if (accessToken != null) {
                         BearerTokens(accessToken, refreshToken ?: "")
@@ -43,7 +44,7 @@ class KtorInternalYandexApi(
                 }
 
                 refreshTokens {
-                    val response = this.client.post("https://oauth.yandex.ru/token") {
+                    val response = client.post("https://oauth.yandex.ru/token") {
                         contentType(ContentType.Application.FormUrlEncoded)
 
                         setBody(FormDataContent(Parameters.build {
@@ -108,7 +109,7 @@ class KtorInternalYandexApi(
     override suspend fun exchangeForOAuthToken(code: String, dto: YandexAuthData)
         : ResultOrError<OAuth2Token, YandexError>
     {
-        val response = client.post("$AUTH_BASE_URL$EXCHANGE_FOR_TOKEN") {
+        val response = httpClient.post("$AUTH_BASE_URL$EXCHANGE_FOR_TOKEN") {
             headers.remove(HttpHeaders.Authorization)
 
             contentType(ContentType.Application.FormUrlEncoded)
@@ -135,7 +136,7 @@ class KtorInternalYandexApi(
     }
 
     override suspend fun queryUserInfo() : ResultOrError<YandexUserInfo, YandexError> {
-        val response = client.get("$BASE_URL$USER_INFO")
+        val response = httpClient.get("$BASE_URL$USER_INFO")
 
         return when (response.status) {
             HttpStatusCode.OK -> ResultOrError.Success(response.body<YandexUserInfo>())
@@ -146,7 +147,7 @@ class KtorInternalYandexApi(
     }
 
     override suspend fun getAccountInfo(): ResultOrError<YandexAccountInfo, YandexError> {
-        val response = client.get(ACCOUNT_BASE_URL)
+        val response = httpClient.get(ACCOUNT_BASE_URL)
 
         return when (response.status) {
             HttpStatusCode.OK -> ResultOrError.Success(response.body<YandexAccountInfo>())

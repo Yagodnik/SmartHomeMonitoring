@@ -33,6 +33,7 @@ kotlin {
             implementation(libs.ksafe)
             implementation(libs.kotlinCryptoSha2)
             implementation(libs.kotlinCryptoSecureRandom)
+            implementation(libs.cryptographyCore)
         }
 
         commonTest.dependencies {
@@ -44,10 +45,18 @@ kotlin {
             runtimeOnly("org.junit.platform:junit-platform-launcher")
         }
 
-        jvmMain.dependencies    { implementation(libs.ktorClientCio) }
-        linuxMain.dependencies  { implementation(libs.ktorClientCurl) }
-        mingwMain.dependencies  { implementation(libs.ktorClientWinhttp) }
-        macosMain.dependencies  { implementation(libs.ktorClientDarwin) }
+        jvmMain.dependencies    {
+            implementation(libs.ktorClientCio)
+            implementation(libs.cryptographyProviderJdk)
+        }
+
+//        linuxMain.dependencies  { implementation(libs.ktorClientCurl) }
+//        mingwMain.dependencies  { implementation(libs.ktorClientWinhttp) }
+
+        macosMain.dependencies  {
+            implementation(libs.ktorClientDarwin)
+            implementation(libs.cryptographyProviderCryptokit)
+        }
     }
 }
 

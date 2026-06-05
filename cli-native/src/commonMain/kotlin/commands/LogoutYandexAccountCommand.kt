@@ -1,9 +1,15 @@
 package commands
 
 import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.terminal
+import services.AccountService
 
-class LogoutYandexAccountCommand : CliktCommand("logout-yandex") {
+class LogoutYandexAccountCommand(
+    private val accountService: AccountService,
+) : CliktCommand("logout-yandex") {
     override fun run() {
-        TODO("Not yet implemented")
+        accountService.deleteAuthData()
+
+        terminal.println("Credentials were deleted")
     }
 }
