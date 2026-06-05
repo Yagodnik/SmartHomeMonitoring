@@ -152,6 +152,7 @@ class YandexMonitoringApplication(private val t: Terminal) : CliktCommand("smart
         }
 
         httpServer.stop()
+        appServices.close()
 
         terminal.println(TextColors.green("Bye!"))
     }

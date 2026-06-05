@@ -17,8 +17,8 @@ kotlin {
 
     jvm()
 //    linuxArm64()
-//    linuxX64()
-//    mingwX64()
+    linuxX64()
+    mingwX64()
     macosArm64()
     macosX64()
 

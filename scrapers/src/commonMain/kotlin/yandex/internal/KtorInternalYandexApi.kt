@@ -12,6 +12,7 @@ import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import io.ktor.util.AttributeKey
 import io.ktor.util.logging.Logger
 import kotlinx.serialization.json.Json
 import models.OAuth2Token
@@ -78,6 +79,11 @@ class KtorInternalYandexApi(
                         else -> null
                     }
                 }
+
+                sendWithoutRequest { request ->
+                    val shouldSkip = request.attributes.getOrNull(SkipAuthKey) ?: false
+                    !shouldSkip
+                }
             }
         }
     },
@@ -93,6 +99,8 @@ class KtorInternalYandexApi(
         private const val USER_INFO = "/user/info"
         private const val EXCHANGE_FOR_TOKEN = "/token"
         private const val GRANT_TYPE = "authorization_code"
+
+        private val SkipAuthKey = AttributeKey<Boolean>("SkipAuthKey")
     }
 
     override suspend fun generateAuthUrl(): YandexAuthData {
@@ -112,7 +120,7 @@ class KtorInternalYandexApi(
         : ResultOrError<OAuth2Token, YandexError>
     {
         val response = httpClient.post("$AUTH_BASE_URL$EXCHANGE_FOR_TOKEN") {
-            headers.remove(HttpHeaders.Authorization)
+            attributes.put(SkipAuthKey, true)
 
             contentType(ContentType.Application.FormUrlEncoded)
 
@@ -158,4 +166,6 @@ class KtorInternalYandexApi(
                 .getOrElse { ResultOrError.Error(response.asYandexError()) }
         }
     }
+
+    override fun close() = httpClient.close()
 }

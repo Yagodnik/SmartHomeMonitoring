@@ -2,6 +2,9 @@
 .kotlin
 **/.env
 docker/.env
+docker/credentials
+docker/logs
+docker/logs/*
 
 .gradle
 build/
@@ -45,3 +48,4 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+/docker/log/

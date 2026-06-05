@@ -8,6 +8,8 @@ import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.readByteArray
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 import org.kotlincrypto.SecureRandom
 import org.kotlincrypto.hash.sha2.SHA256
@@ -16,8 +18,12 @@ class FileSecretsStorage(
     credentialsDir: String,
     private val masterKey: String
 ) : SecretsStorage {
+    companion object {
+        const val DEFAULT_SECRETS_PATH = "secrets.json.enc"
+    }
+
     private var configDirectoryPath = Path(credentialsDir)
-    private val filePath = Path(credentialsDir, "secrets.json.enc")
+    private val filePath = Path(credentialsDir, DEFAULT_SECRETS_PATH)
     private val json = Json { ignoreUnknownKeys = true }
 
     private val cryptoProvider = CryptographyProvider.Default
@@ -30,10 +36,13 @@ class FileSecretsStorage(
     override fun saveSecret(key: String, value: String) {
         SystemFileSystem.createDirectories(configDirectoryPath, mustCreate = false)
 
-        val currentSecrets = loadSecretsMap().toMutableMap()
+        val currentSecrets: MutableMap<String, String> = loadSecretsMap().toMutableMap()
         currentSecrets[key] = value
 
-        val plaintext = json.encodeToString(currentSecrets)
+        val plaintext = json.encodeToString(
+            MapSerializer(String.serializer(), String.serializer()),
+            currentSecrets)
+
         val bytesToWrite = encrypt(plaintext, masterKey)
 
         SystemFileSystem.sink(filePath).buffered().use { it.write(bytesToWrite) }

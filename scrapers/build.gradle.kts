@@ -17,8 +17,8 @@ kotlin {
 
     jvm()
 //    linuxArm64()
-//    linuxX64()
-//    mingwX64()
+    linuxX64()
+    mingwX64()
     macosArm64()
     macosX64()
 
@@ -31,7 +31,6 @@ kotlin {
             api(libs.ktorClientLogging)
             api(libs.kotlinxSerializationJson)
             implementation(libs.kotlinEnvVar)
-            implementation(libs.ksafe)
             implementation(libs.kotlinCryptoSha2)
             implementation(libs.kotlinCryptoSecureRandom)
             implementation(libs.cryptographyCore)
@@ -51,8 +50,8 @@ kotlin {
             implementation(libs.cryptographyProviderJdk)
         }
 
-//        linuxMain.dependencies  { implementation(libs.ktorClientCurl) }
-//        mingwMain.dependencies  { implementation(libs.ktorClientWinhttp) }
+        linuxMain.dependencies  { implementation(libs.ktorClientCurl) }
+        mingwMain.dependencies  { implementation(libs.ktorClientWinhttp) }
 
         macosMain.dependencies  {
             implementation(libs.ktorClientDarwin)

@@ -15,4 +15,6 @@ interface InternalYandexApi {
     suspend fun queryUserInfo() : ResultOrError<YandexUserInfo, YandexError>
 
     suspend fun getAccountInfo(): ResultOrError<YandexAccountInfo, YandexError>
+
+    fun close()
 }

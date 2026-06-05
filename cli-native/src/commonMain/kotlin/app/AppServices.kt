@@ -47,4 +47,8 @@ data class AppServices(
             )
         }
     }
+
+    fun close() {
+        internalApi.close()
+    }
 }

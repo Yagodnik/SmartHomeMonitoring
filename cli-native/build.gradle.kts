@@ -19,8 +19,8 @@ kotlin {
     jvm()
     macosArm64()
     macosX64()
-//    linuxX64()
-//    mingwX64()
+    linuxX64()
+    mingwX64()
 
 //    linuxArm64 {
 //        binaries {
@@ -57,6 +57,10 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlinTest)
             implementation(libs.ktorClientMock)
+        }
+
+        jvmMain.dependencies {
+            implementation(libs.slf4jNop)
         }
 
         jvmTest.dependencies {

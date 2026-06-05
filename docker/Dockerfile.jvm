@@ -8,6 +8,8 @@ RUN ./gradlew :cli-native:jvmJar  --no-daemon --console=plain
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
+ENV YANDEX_CLIENT_ID=${YANDEX_CLIENT_ID}
+
 COPY --from=builder /app/cli-native/build/libs/*.jar /app/app.jar
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup

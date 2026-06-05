@@ -37,7 +37,7 @@ class CsvExporter(
             val values = buildValuesForMetric(timestamp, metric)
             val formattedString = format.resolveTemplate(values)
 
-            println(formattedString)
+//            println(formattedString)
             writeString(timestamp, formattedString)
         }
     }
@@ -84,7 +84,7 @@ class CsvExporter(
         val fileName = "$FEATURE_NAME_PREFIX-$date$EXTENSION"
         val newPath = Path(outputDir, fileName)
 
-        currentSink = SystemFileSystem.sink(newPath).buffered()
+        currentSink = SystemFileSystem.sink(newPath, append = true).buffered()
         currentFileDate = date
     }
 }

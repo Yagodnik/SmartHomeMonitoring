@@ -1,8 +1,8 @@
-polling-interval: 15
+polling-interval: 60
 port: 9091
 exporters:
   csv:
     path: .
     format: "{{ timestamp }};{{ deviceId }};{{ deviceName }};{{ metric }} = {{ value }}"
-    outputDir: "/log"
+    outputDir: "/logs"
   prometheus: {}
