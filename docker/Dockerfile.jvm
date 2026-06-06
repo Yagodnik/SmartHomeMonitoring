@@ -8,13 +8,20 @@ RUN ./gradlew :cli-native:jvmJar  --no-daemon --console=plain
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
+ARG YANDEX_CLIENT_ID
 ENV YANDEX_CLIENT_ID=${YANDEX_CLIENT_ID}
 
 COPY --from=builder /app/cli-native/build/libs/*.jar /app/app.jar
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-USER appuser
+
+RUN mkdir -p /credentials /data
+
+RUN apk add --no-cache su-exec
+
+RUN printf '#!/bin/sh\nchown -R appuser:appgroup /data /credentials 2>/dev/null || true\nexec su-exec appuser java $JAVA_OPTS -jar /app/app.jar "$@"\n' > /docker-entrypoint.sh \
+    && chmod +x /docker-entrypoint.sh
 
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
 
-ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar /app/app.jar \"$@\"", "sh"]
+ENTRYPOINT ["/docker-entrypoint.sh"]

@@ -18,16 +18,17 @@ services:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
 
   monitoring-app:
+#    image: ghcr.io/yagodnik/smarthomemonitoring:d0d45761a6166b055ce3fd75d08395915c4fab26
     image: smart-home-monitoring-jvm:latest
     ports:
       - "9091:9091"
     environment:
       ACCESS_TOKEN: "${ACCESS_TOKEN}"
-      YANDEX_CLIENT_ID: "${YANDEX_CLIENT_ID}"
+#      YANDEX_CLIENT_ID: "${YANDEX_CLIENT_ID}"
       CREDENTIALS_DIR: "/credentials"
       MASTER_KEY: "1"
     volumes:
       - ./credentials:/credentials
       - ./config.yaml:/config.yaml
-      - ./logs:/logs
+      - ./logs:/data/logs
     command: ["-c", "/config.yaml"]
