@@ -1,5 +1,5 @@
 build-jvm:
-    docker build -t smart-home-monitoring-jvm -f ./docker/Dockerfile.jvm .
+    docker build --build-arg YANDEX_CLIENT_ID="1" -t smart-home-monitoring-jvm -f ./docker/Dockerfile.jvm .
 
 compose-up-d:
     docker compose -f ./docker/docker-compose.yml -p smart-monitoring up -d
