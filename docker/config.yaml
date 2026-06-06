@@ -4,5 +4,5 @@ exporters:
   csv:
     path: .
     format: "{{ timestamp }};{{ deviceId }};{{ deviceName }};{{ metric }} = {{ value }}"
-    outputDir: "/logs"
+    outputDir: "/data/logs"
   prometheus: {}

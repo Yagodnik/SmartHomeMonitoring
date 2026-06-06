@@ -29,5 +29,5 @@ services:
     volumes:
       - ./credentials:/credentials
       - ./config.yaml:/config.yaml
-      - ./logs:/logs
+      - ./logs:/data/logs
     command: ["-c", "/config.yaml"]

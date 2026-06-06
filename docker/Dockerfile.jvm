@@ -18,12 +18,11 @@ RUN mkdir -p /credentials /data
 
 RUN apk add --no-cache su-exec
 
-RUN echo '#!/bin/sh\n\
-# Force ownership to appuser for ALL subfolders/files (fixes host root-created folders)\n\
-chown -R appuser:appgroup /data /credentials 2>/dev/null || true\n\
-# Drop privileges and run the Java app as appuser\n\
-exec su-exec appuser java $JAVA_OPTS -jar /app/app.jar "$@"' > /docker-entrypoint.sh \
-&& chmod +x /docker-entrypoint.sh
+RUN cat > /docker-entrypoint.sh <<EOF
+  chown -R appuser:appgroup /data /credentials 2>/dev/null || true
+  exec su-exec appuser java $JAVA_OPTS -jar /app/app.jar "$@"
+EOF
+RUN chmod +x /docker-entrypoint.sh
 
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
 
