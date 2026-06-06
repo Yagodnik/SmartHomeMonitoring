@@ -13,10 +13,18 @@ ENV YANDEX_CLIENT_ID=${YANDEX_CLIENT_ID}
 COPY --from=builder /app/cli-native/build/libs/*.jar /app/app.jar
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
 RUN mkdir -p /credentials /data
-RUN chown -R appuser:appgroup /app /credentials /data
-USER appuser
+
+RUN apk add --no-cache su-exec
+
+RUN echo '#!/bin/sh\n\
+# Force ownership to appuser for ALL subfolders/files (fixes host root-created folders)\n\
+chown -R appuser:appgroup /data /credentials 2>/dev/null || true\n\
+# Drop privileges and run the Java app as appuser\n\
+exec su-exec appuser java $JAVA_OPTS -jar /app/app.jar "$@"' > /docker-entrypoint.sh \
+&& chmod +x /docker-entrypoint.sh
 
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
 
-ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar /app/app.jar \"$@\"", "sh"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
